@@ -13,7 +13,32 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Button"
-        android:id="@+id/button"
+        android:text="Add Question"
+        android:id="@+id/btnAddQuestion"
+        android:onClick="addQuestion"
+        android:layout_gravity="center_horizontal" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Create Test"
+        android:id="@+id/btnCreateTest"
+        android:onClick="createTest"
+        android:layout_gravity="center_horizontal" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Do Test"
+        android:id="@+id/btnDoTest"
+        android:onClick="doTest"
+        android:layout_gravity="center_horizontal" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="See Result"
+        android:id="@+id/btnSeeResult"
+        android:onClick="seeResult"
         android:layout_gravity="center_horizontal" />
 </LinearLayout>
