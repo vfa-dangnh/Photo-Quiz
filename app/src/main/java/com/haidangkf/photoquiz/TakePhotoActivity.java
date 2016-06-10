@@ -27,9 +27,9 @@ public class TakePhotoActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_take_photo);
+//        setContentView(R.layout.activity_add_question);
 
-        mImageView = (ImageView) findViewById(R.id.mImageView);
+        mImageView = (ImageView) findViewById(R.id.btnPhotoTaking);
 
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (cameraIntent.resolveActivity(getPackageManager()) != null) {
@@ -37,9 +37,10 @@ public class TakePhotoActivity extends Activity {
             File photoFile = null;
             try {
                 photoFile = createImageFile();
+                Log.i(TAG, "Photo saved into the Gallery");
             } catch (IOException ex) {
                 // Error occurred while creating the File
-                Log.i(TAG, "IOException Error: " + ex.toString());
+                Log.i(TAG, "Error: " + ex.toString());
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
@@ -48,6 +49,7 @@ public class TakePhotoActivity extends Activity {
             }
         }
 
+        finish(); // finish this activity
     }
 
     @Override
@@ -71,9 +73,12 @@ public class TakePhotoActivity extends Activity {
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES);
+        String imageFileName = "photo_" + timeStamp + "_";
+        String dirPath = Environment.getExternalStorageDirectory().toString() + "/Photo_Quiz/Photos";
+//        File storageDir = Environment.getExternalStoragePublicDirectory(
+//                Environment.DIRECTORY_PICTURES);
+        File storageDir = new File(dirPath);
+        storageDir.mkdirs(); // make this as a directory
         File image = File.createTempFile(
                 imageFileName,  // prefix
                 ".jpg",         // suffix
@@ -81,9 +86,9 @@ public class TakePhotoActivity extends Activity {
         );
 
         // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = "file:" + image.getAbsolutePath();
-        Log.i(TAG, "mCurrentPhotoPath = " + mCurrentPhotoPath);
-
+        mCurrentPhotoPath = "" + image.getAbsolutePath();
+        AddQuestionActivity.photoPath = mCurrentPhotoPath;
+//        Log.i(TAG, "mCurrentPhotoPath = " + mCurrentPhotoPath);
 
         // send Broadcast to notify this photo and see it in Gallery
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
@@ -94,16 +99,17 @@ public class TakePhotoActivity extends Activity {
         return image;
     }
 
+    // Hàm lưu file ảnh Bitmap vào bộ nhớ máy dưới dạng JPG
     private boolean saveImageToStorage(Bitmap finalBitmap) {
         boolean result = false;
 
-        String dirPath = Environment.getExternalStorageDirectory().toString() + "/Photo_Quiz/Photos";
-        Log.i(TAG, "dirPath = " + dirPath);
-        File myDir = new File(dirPath);
+        String storageDir = Environment.getExternalStorageDirectory().toString() + "/Photo_Quiz/Photos";
+        Log.i(TAG, "storageDir = " + storageDir);
+        File myDir = new File(storageDir);
         myDir.mkdirs();
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String fname = "photo_" + timeStamp + ".jpg";
-        File file = new File(dirPath, fname);
+        String fileName = "photo_" + timeStamp + ".jpg";
+        File file = new File(storageDir, fileName);
         if (file.exists()) file.delete();
         try {
             FileOutputStream out = new FileOutputStream(file);
