@@ -16,18 +16,36 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+
+        <activity android:name=".MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AddQuestionActivity" />
-        <activity android:name=".CreateTestActivity" />
-        <activity android:name=".DoTestActivity" />
-        <activity android:name=".ResultActivity" />
-        <activity android:name=".TakePhotoActivity"></activity>
+
+        <activity android:name=".AddQuestionActivity"
+            android:screenOrientation="portrait">
+        </activity>
+
+        <activity android:name=".CreateTestActivity"
+            android:screenOrientation="portrait">
+        </activity>
+
+        <activity android:name=".DoTestActivity"
+            android:screenOrientation="portrait">
+        </activity>
+
+        <activity android:name=".ResultActivity"
+            android:screenOrientation="portrait">
+    </activity>
+
+        <activity android:name=".TakePhotoActivity"
+            android:screenOrientation="portrait">
+        </activity>
+
     </application>
 
 </manifest>

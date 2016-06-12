@@ -22,11 +22,4 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(MainActivity.this, CreateTestActivity.class));
     }
 
-    public void doTest(View v){
-        startActivity(new Intent(MainActivity.this, DoTestActivity.class));
-    }
-
-    public void seeResult(View v){
-        startActivity(new Intent(MainActivity.this, ResultActivity.class));
-    }
 }

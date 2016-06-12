@@ -90,7 +90,7 @@ public class TakePhotoActivity extends Activity {
         AddQuestionActivity.photoPath = mCurrentPhotoPath;
 //        Log.i(TAG, "mCurrentPhotoPath = " + mCurrentPhotoPath);
 
-        // send Broadcast to notify this photo and see it in Gallery
+        // send Broadcast to notify this photo and be able to see it in Gallery
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         Uri contentUri = Uri.fromFile(image);
         mediaScanIntent.setData(contentUri);
@@ -117,7 +117,7 @@ public class TakePhotoActivity extends Activity {
             out.flush();
             out.close();
 
-            // send Broadcast to notify this photo and see it in Gallery
+            // send Broadcast to notify this photo and be able to see it in Gallery
             Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
             Uri contentUri = Uri.fromFile(file);
             mediaScanIntent.setData(contentUri);

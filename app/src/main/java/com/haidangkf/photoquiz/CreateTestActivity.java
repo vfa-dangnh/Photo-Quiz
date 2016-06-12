@@ -1,77 +1,74 @@
 package com.haidangkf.photoquiz;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class CreateTestActivity extends AppCompatActivity {
 
-    private List<String> categoryList = new ArrayList<>();
-    private RecyclerView recyclerView;
-    private CategoryAdapter mAdapter;
+    final String TAG = "my_log";
+    private TextView tvSelectCategory;
     private TextView tvCategory;
     private CheckBox chkCategory;
-    private boolean isExpandCategory = false;
+    private EditText etNumOfQuestion;
+    private Button btnCreate;
+    private Button btnCancel;
+    private boolean isExpandCategory = true;
+    private int chkCount;
+
+    private ArrayList<Category> categoryList = new ArrayList<>();
+    private RecyclerView recyclerView;
+    private CategoryAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_test);
 
-        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        recyclerView.setVisibility(View.VISIBLE);
+        getControls();
+        addCategoryData();
 
         mAdapter = new CategoryAdapter(categoryList);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        final RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        // display the divider
+        // display the divider between rows
         recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
         // set the adapter
         recyclerView.setAdapter(mAdapter);
+        mAdapter.notifyDataSetChanged();
 
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView, new ClickListener() {
             @Override
             public void onClick(View view, int position) {
-                String category = categoryList.get(position);
-//                Toast.makeText(getApplicationContext(), category + " is selected", Toast.LENGTH_SHORT).show();
-
-                chkCategory = (CheckBox) recyclerView.getChildAt(position).findViewById(R.id.chkCategory);
-                if (chkCategory.isChecked()) {
-                    chkCategory.setChecked(false);
-                } else {
-                    chkCategory.setChecked(true);
-                }
-                /*for (int x = 0; x < recyclerView.getChildCount(); x++) {
-                    chkCategory = (CheckBox) recyclerView.getChildAt(x).findViewById(R.id.chkCategory);
-                    if (chkCategory.isChecked()) {
-                        // do something
-                    }
-                }*/
+//                View childView = mLayoutManager.findViewByPosition(position);
+//                tvCategory = (TextView) childView.findViewById(R.id.tvCategory);
+//                Toast.makeText(CreateTestActivity.this, "position " + position + " - " + tvCategory.getText().toString(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onLongClick(View view, int position) {
-                String category = categoryList.get(position);
-//                Toast.makeText(getApplicationContext(), "Long click on " + category, Toast.LENGTH_SHORT).show();
+//                Category category = categoryList.get(position);
+//                Toast.makeText(getApplicationContext(), "Long click on " + category.getCategory(), Toast.LENGTH_SHORT).show();
             }
         }));
 
-        addSampleCategoryData();
-
-        tvCategory = (TextView) findViewById(R.id.tvCategory);
-        tvCategory.setOnClickListener(new View.OnClickListener() {
+        tvSelectCategory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!isExpandCategory) {
@@ -84,16 +81,118 @@ public class CreateTestActivity extends AppCompatActivity {
             }
         });
 
+        btnCreate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String numberOfQuestion = etNumOfQuestion.getText().toString();
+                if (numberOfQuestion.isEmpty()) {
+                    Toast.makeText(CreateTestActivity.this, "Please enter number of question", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if(Integer.parseInt(numberOfQuestion)<1) {
+                    Toast.makeText(CreateTestActivity.this, "Number of question is invalid", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                chkCount = 0;
+                ArrayList<String> selectedItems = new ArrayList<String>();
+                for (int x = 0; x < categoryList.size(); x++) {
+                    if (categoryList.get(x).isSelected()) {
+                        chkCount++;
+                        selectedItems.add(categoryList.get(x).getCategory());
+                    }
+                }
+                if (chkCount < 1) {
+                    Toast.makeText(CreateTestActivity.this, "Please select at least 1 category", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                Log.i(TAG, "getChildCount = " + recyclerView.getChildCount()); // count visible items on screen
+                Log.i(TAG, "getItemCount = " + mAdapter.getItemCount()); // count all items in Adapter
+                Log.i(TAG, "chkCount = " + chkCount);
+
+                Intent i = new Intent();
+                i.putExtra("numberOfQuestion",Integer.parseInt(numberOfQuestion));
+                i.putStringArrayListExtra("categoryList", selectedItems);
+                i.setClass(CreateTestActivity.this, DoTestActivity.class);
+                startActivity(i);
+                finish();
+            }
+        });
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
     }
 
-    private void addSampleCategoryData() {
-        categoryList.add("Object");
-        categoryList.add("Scenery");
-        categoryList.add("Human");
-        categoryList.add("Actor");
-        categoryList.add("Singer");
-        categoryList.add("Device");
-        mAdapter.notifyDataSetChanged();
+    private void addCategoryData() {
+        ArrayList<Question> list = MyApplication.db.getQuestionList();
+
+        for (Question question : list){
+            Category category = new Category(question.getCategory());
+            boolean isExisted = false;
+            for (Category c : categoryList){
+                if(c.getCategory().equalsIgnoreCase(category.getCategory())){
+                    isExisted = true;
+                    break;
+                }
+            }
+            if(!isExisted){
+                categoryList.add(category);
+            }
+        }
+
+
+//        Category category = new Category("Object");
+//        categoryList.add(category);
+//
+//        category = new Category("Scenery");
+//        categoryList.add(category);
+//
+//        category = new Category("Human");
+//        categoryList.add(category);
+//
+//        category = new Category("Actor");
+//        categoryList.add(category);
+//
+//        category = new Category("Singer");
+//        categoryList.add(category);
+//
+//        category = new Category("Device");
+//        categoryList.add(category);
+//
+//        category = new Category("Temp1");
+//        categoryList.add(category);
+//
+//        category = new Category("Temp2");
+//        categoryList.add(category);
+//
+//        category = new Category("Temp3");
+//        categoryList.add(category);
+//
+//        category = new Category("Temp4");
+//        categoryList.add(category);
+//
+//        category = new Category("Temp5");
+//        categoryList.add(category);
+//
+//        category = new Category("Temp6");
+//        categoryList.add(category);
+//
+//        category = new Category("Temp7");
+//        categoryList.add(category);
+    }
+
+    private void getControls() {
+        tvSelectCategory = (TextView) findViewById(R.id.tvSelectCategory);
+        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        etNumOfQuestion = (EditText) findViewById(R.id.etNumOfQuestion);
+        btnCreate = (Button) findViewById(R.id.btnCreate);
+        btnCancel = (Button) findViewById(R.id.btnCancel);
     }
 
     //--------------------------------------------------------------------------------

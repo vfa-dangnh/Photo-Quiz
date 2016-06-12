@@ -19,6 +19,8 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -36,6 +38,7 @@ public class AddQuestionActivity extends AppCompatActivity {
 
     public static String photoPath = "";
     public static String audioPath = "";
+    File dirPath;
 
     private MediaRecorder myAudioRecorder;
     private boolean isRecording = false;
@@ -58,12 +61,12 @@ public class AddQuestionActivity extends AppCompatActivity {
 
 
         getControls();
-        myAudioRecorder = new MediaRecorder();
-        myAudioRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        myAudioRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        myAudioRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
 
-        btnDelete.setEnabled(false);
+
+        dirPath = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Photo_Quiz/Audio/");
+        dirPath.mkdirs(); // make this as directory
+
+        btnDelete.setEnabled(false); // disable Delete button
 
         btnPhotoTaking.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,17 +82,12 @@ public class AddQuestionActivity extends AppCompatActivity {
                 if (!isRecording) {
                     String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
                     String audioFileName = "audio_" + timeStamp + ".3gp";
-                    File dirPath = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Photo_Quiz/Audio/");
-                    dirPath.mkdirs(); // make this as directory
                     audioPath = dirPath + "/" + audioFileName;
                     Log.i(TAG, "audioPath = " + audioPath);
 
-
-                    myAudioRecorder.setOutputFile(audioPath);
-
                     isRecording = true;
                     btnRecord.setBackgroundResource(R.drawable.record_stop);
-                    recordAudio();
+                    recordAudio(); // call this method to record
                 } else {
                     stopRecordAudio();
                     isRecording = false;
@@ -132,6 +130,22 @@ public class AddQuestionActivity extends AppCompatActivity {
                     Toast.makeText(AddQuestionActivity.this, "Please record your voice", Toast.LENGTH_SHORT).show();
                     return;
                 }
+
+                Question question = new Question(category,comment,photoPath,audioPath);
+                if (MyApplication.db.addQuestion(question) > 0){
+                    Toast.makeText(AddQuestionActivity.this, "Question added successful", Toast.LENGTH_SHORT).show();
+                    btnDelete.setEnabled(false); // disable Delete button
+                    btnPhotoTaking.setBackgroundResource(R.drawable.takingphoto);
+                    Bitmap transparentBitmap = BitmapFactory.decodeResource(AddQuestionActivity.this.getResources(),
+                            R.drawable.transparent_background);
+                    btnPhotoTaking.setImageBitmap(transparentBitmap);
+                    etCategory.setText("");
+                    etComment.setText("");
+                    photoPath="";
+                    audioPath="";
+                } else {
+                    Toast.makeText(AddQuestionActivity.this, "Failed to add question", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -142,13 +156,12 @@ public class AddQuestionActivity extends AppCompatActivity {
             }
         });
 
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.i(TAG, "onResume AddQuestion");
+        Log.i(TAG, "onResume AddQuestionActivity");
 
         reloadPhotoToView(photoPath);
         Log.i(TAG, "photoPath = " + photoPath);
@@ -157,17 +170,49 @@ public class AddQuestionActivity extends AppCompatActivity {
     public void reloadPhotoToView(String path) {
         File imgFile = new File(path);
         if (imgFile.exists()) {
-            Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+            Bitmap myBitmap = decodeFile(imgFile);
             btnPhotoTaking.setBackgroundResource(R.drawable.transparent_background);
             btnPhotoTaking.setImageBitmap(myBitmap);
         }
     }
 
+    // Decodes image and scales it to reduce memory consumption
+    public Bitmap decodeFile(File f) {
+        try {
+            // Decode image size
+            BitmapFactory.Options o = new BitmapFactory.Options();
+            o.inJustDecodeBounds = true;
+            BitmapFactory.decodeStream(new FileInputStream(f), null, o);
+
+            // The new size we want to scale to
+            final int REQUIRED_SIZE=70;
+
+            // Find the correct scale value. It should be the power of 2.
+            int scale = 1;
+            while(o.outWidth / scale / 2 >= REQUIRED_SIZE &&
+                    o.outHeight / scale / 2 >= REQUIRED_SIZE) {
+                scale *= 2;
+            }
+
+            // Decode with inSampleSize
+            BitmapFactory.Options o2 = new BitmapFactory.Options();
+            o2.inSampleSize = scale;
+            return BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
+        } catch (FileNotFoundException e) {}
+        return null;
+    }
+
     public void recordAudio() {
         try {
+            myAudioRecorder = new MediaRecorder();
+            myAudioRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+            myAudioRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+            myAudioRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
+            myAudioRecorder.setOutputFile(audioPath);
+
             myAudioRecorder.prepare();
             myAudioRecorder.start();
-            Log.i(TAG, "dang ghi day");
+            Log.i(TAG, "is recording...");
         } catch (IllegalStateException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

@@ -5,13 +5,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyViewHolder> {
 
-    private List<String> categoryList;
+    private ArrayList<Category> categoryList;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView tvCategory;
@@ -25,7 +26,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyView
     }
 
 
-    public CategoryAdapter(List<String> categoryList) {
+    public CategoryAdapter(ArrayList<Category> categoryList) {
         this.categoryList = categoryList;
     }
 
@@ -38,9 +39,24 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyView
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
-        String category = categoryList.get(position);
-        holder.tvCategory.setText(category);
+    public void onBindViewHolder(final MyViewHolder holder, int position) {
+        final Category category = categoryList.get(position);
+        holder.tvCategory.setText(category.getCategory());
+
+        // in some cases, it will prevent unwanted situations
+        holder.chkCategory.setOnCheckedChangeListener(null);
+
+        // if true, your checkbox will be selected, else unselected
+        holder.chkCategory.setChecked(category.isSelected());
+
+        holder.chkCategory.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                // set your category's last status
+                category.setSelected(isChecked);
+            }
+        });
+
     }
 
     @Override
