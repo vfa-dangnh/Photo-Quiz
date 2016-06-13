@@ -4,6 +4,8 @@
     <string name="lang">Vietnamese</string>
     <string name="category">Loại</string>
     <string name="comment">Ghi chú</string>
+    <string name="record">Ghi âm</string>
+    <string name="delete">Xoá</string>
     <string name="add">Thêm</string>
     <string name="create">Tạo mới</string>
     <string name="cancel">Huỷ</string>

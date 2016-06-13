@@ -8,14 +8,15 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
+    android:background="@drawable/custom_btn_4"
     tools:context=".CreateTestActivity">
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="45dp"
         android:id="@+id/tvSelectCategory"
         android:gravity="center"
-        android:textSize="20sp"
+        android:textSize="25sp"
         android:textStyle="bold"
         android:textColor="#ff0000"
         android:background="@color/cyan"
@@ -35,6 +36,8 @@
         android:layout_height="50dp"
         android:layout_marginTop="20dp"
         android:layout_marginBottom="40dp"
+        android:textColor="#ff0000"
+        android:textSize="25sp"
         android:inputType="number"
         android:gravity="center"
         android:hint="@string/number_of_ques"
@@ -50,14 +53,18 @@
         android:layout_height="50dp"
         android:layout_marginRight="40dp"
         android:layout_gravity="center"
+        android:background="@drawable/custom_btn_1"
         android:text="@string/create"
+        android:textStyle="bold"
         android:id="@+id/btnCreate" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:layout_gravity="center"
+        android:background="@drawable/custom_btn_1"
         android:text="@string/cancel"
+        android:textStyle="bold"
         android:id="@+id/btnCancel" />
     </LinearLayout>
 

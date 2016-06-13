@@ -2,6 +2,7 @@ package com.haidangkf.photoquiz;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -42,6 +43,9 @@ public class CreateTestActivity extends AppCompatActivity {
 
         getControls();
         addCategoryData();
+        // set font for TextView tvSelectCategory
+        Typeface face = Typeface.createFromAsset(getAssets(), "fonts/victoria.ttf");
+        tvSelectCategory.setTypeface(face);
 
         mAdapter = new CategoryAdapter(categoryList);
         final RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());

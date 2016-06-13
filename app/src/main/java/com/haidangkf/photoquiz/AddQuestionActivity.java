@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -31,8 +30,8 @@ public class AddQuestionActivity extends AppCompatActivity {
     ImageView btnPhotoTaking;
     EditText etCategory;
     EditText etComment;
-    ImageButton btnRecord;
-    ImageButton btnDelete;
+    Button btnRecord;
+    Button btnDelete;
     Button btnAdd;
     Button btnCancel;
 
@@ -84,12 +83,14 @@ public class AddQuestionActivity extends AppCompatActivity {
                     Log.i(TAG, "audioPath = " + audioPath);
 
                     isRecording = true;
-                    btnRecord.setBackgroundResource(R.drawable.record_stop);
+                    btnRecord.setBackgroundResource(R.drawable.custom_btn_sandrift);
+                    btnRecord.setText("Stop");
                     recordAudio(); // call this method to record
                 } else {
                     stopRecordAudio();
                     isRecording = false;
-                    btnRecord.setBackgroundResource(R.drawable.record);
+                    btnRecord.setBackgroundResource(R.drawable.custom_btn_3);
+                    btnRecord.setText("Record");
                 }
             }
         });
@@ -129,7 +130,7 @@ public class AddQuestionActivity extends AppCompatActivity {
                     return;
                 }
 
-                Question question = new Question(category, comment, photoPath, audioPath);
+                Question question = new Question(category.trim(), comment.trim(), photoPath, audioPath);
                 if (MyApplication.db.addQuestion(question) > 0) {
                     Toast.makeText(AddQuestionActivity.this, getString(R.string.msg_ques_add_success), Toast.LENGTH_SHORT).show();
                     btnDelete.setEnabled(false); // disable Delete button
@@ -239,8 +240,8 @@ public class AddQuestionActivity extends AppCompatActivity {
         btnPhotoTaking = (ImageView) findViewById(R.id.btnPhotoTaking);
         etCategory = (EditText) findViewById(R.id.etCategory);
         etComment = (EditText) findViewById(R.id.etComment);
-        btnRecord = (ImageButton) findViewById(R.id.btnRecord);
-        btnDelete = (ImageButton) findViewById(R.id.btnDelete);
+        btnRecord = (Button) findViewById(R.id.btnRecord);
+        btnDelete = (Button) findViewById(R.id.btnDelete);
         btnAdd = (Button) findViewById(R.id.btnAdd);
         btnCancel = (Button) findViewById(R.id.btnCancel);
     }

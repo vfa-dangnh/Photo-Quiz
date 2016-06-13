@@ -8,40 +8,54 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@drawable/custom_btn_blue"
     tools:context="com.haidangkf.photoquiz.MainActivity">
 
     <ImageButton
-        android:layout_width="40dp"
-        android:layout_height="25dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="10dp"
         android:id="@+id/imgBtnLang"
-        android:layout_gravity="right" />
+        android:layout_width="60dp"
+        android:layout_height="35dp"
+        android:layout_gravity="right"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center">
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:gravity="center_horizontal"
+            android:textSize="45sp"
+            android:textStyle="bold"
+            android:text="Photo-Quiz"
+            android:id="@+id/tvTitle" />
 
         <Button
             android:id="@+id/btnAddQuestion"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="50dp"
-            android:textStyle="bold"
+            android:layout_width="260dp"
+            android:layout_height="100dp"
+            android:textSize="30sp"
             android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="40dp"
+            android:background="@drawable/custom_btn_color"
             android:onClick="addQuestion"
-            android:text="@string/add_question" />
+            android:text="@string/add_question"
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/btnCreateTest"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textStyle="bold"
+            android:layout_width="260dp"
+            android:layout_height="100dp"
+            android:textSize="30sp"
             android:layout_gravity="center_horizontal"
+            android:background="@drawable/custom_btn_color"
             android:onClick="createTest"
-            android:text="@string/create_test" />
+            android:text="@string/create_test"
+            android:textStyle="bold" />
 
     </LinearLayout>
 

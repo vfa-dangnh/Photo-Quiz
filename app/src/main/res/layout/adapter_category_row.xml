@@ -13,7 +13,8 @@
 
     <TableRow
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@drawable/custom_btn_beige">
 
         <TextView
             android:id="@+id/tvCategory"
@@ -21,9 +22,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Object"
-            android:textSize="17dip"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
+            android:textSize="18dip"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"
             android:textColor="#000000"
             android:paddingLeft="?android:attr/expandableListPreferredChildPaddingLeft" />
 

@@ -9,7 +9,7 @@
         android:id="@+id/parentView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#ffffff"
+        android:background="@drawable/custom_btn_2"
         android:clickable="true"
         android:focusableInTouchMode="true"
         android:orientation="vertical"
@@ -51,19 +51,22 @@
             android:gravity="bottom|center_horizontal"
             android:orientation="horizontal">
 
-            <ImageButton
+            <Button
                 android:id="@+id/btnRecord"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:layout_marginLeft="20dp"
+                android:layout_width="100dp"
+                android:layout_height="80dp"
+                android:text="@string/record"
+                android:textSize="20sp"
                 android:layout_marginRight="20dp"
-                android:background="@drawable/record" />
+                android:background="@drawable/custom_btn_3" />
 
-            <ImageButton
+            <Button
                 android:id="@+id/btnDelete"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="@drawable/delete" />
+                android:layout_width="70dp"
+                android:layout_height="50dp"
+                android:text="@string/delete"
+                android:textColor="#000000"
+                android:background="@drawable/custom_btn_oval" />
 
         </LinearLayout>
 
@@ -76,6 +79,9 @@
                 android:id="@+id/btnAdd"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="@drawable/custom_btn_breaker_bay"
+                android:textColor="#ffffff"
+                android:textStyle="bold"
                 android:layout_marginRight="20dp"
                 android:text="@string/add" />
 
@@ -83,6 +89,9 @@
                 android:id="@+id/btnCancel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="@drawable/custom_btn_arsenic"
+                android:textColor="#ffffff"
+                android:textStyle="bold"
                 android:text="@string/cancel" />
 
         </TableRow>
