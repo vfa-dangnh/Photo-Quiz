@@ -19,7 +19,7 @@
         android:textStyle="bold"
         android:textColor="#ff0000"
         android:background="@color/cyan"
-        android:text="Select Category"/>
+        android:text="@string/select_category"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
@@ -37,7 +37,7 @@
         android:layout_marginBottom="40dp"
         android:inputType="number"
         android:gravity="center"
-        android:hint="Number of Question"
+        android:hint="@string/number_of_ques"
         android:id="@+id/etNumOfQuestion" />
 
     <LinearLayout
@@ -50,14 +50,14 @@
         android:layout_height="50dp"
         android:layout_marginRight="40dp"
         android:layout_gravity="center"
-        android:text="Create"
+        android:text="@string/create"
         android:id="@+id/btnCreate" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:layout_gravity="center"
-        android:text="Cancel"
+        android:text="@string/cancel"
         android:id="@+id/btnCancel" />
     </LinearLayout>
 

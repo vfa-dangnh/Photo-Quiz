@@ -1,3 +1,35 @@
 <resources>
     <string name="app_name">Photo Quiz</string>
+
+    <string name="lang">English</string>
+    <string name="category">Category</string>
+    <string name="comment">Comment</string>
+    <string name="add">Add</string>
+    <string name="create">Create</string>
+    <string name="cancel">Cancel</string>
+    <string name="select_category">Select Category</string>
+    <string name="number_of_ques">Number of Question</string>
+    <string name="add_question">Add Question</string>
+    <string name="create_test">Create Test</string>
+    <string name="main_screen">Main Screen</string>
+
+    <string name="msg_record_deleted">The record file has been deleted</string>
+    <string name="msg_file_not_exists">File does not exists</string>
+    <string name="msg_category_comment_not_empty">Category and Comment cannot empty</string>
+    <string name="msg_take_photo">Please taking a photo</string>
+    <string name="msg_record_voice">Please record your voice</string>
+    <string name="msg_ques_add_success">Question added successful</string>
+    <string name="msg_ques_add_fail">Failed to add question</string>
+    <string name="msg_is_recording">Is recording...</string>
+    <string name="msg_record_success">Audio recorded successfully</string>
+
+    <string name="msg_enter_num_ques">Please enter number of question</string>
+    <string name="msg_num_ques_invalid">Number of question is invalid</string>
+    <string name="msg_select_at_least">Please select at least 1 category</string>
+    <string name="msg_not_enough_ques">Not enough question !</string>
+    <string name="msg_max_of_ques_is">The maximum number of question matches your selection is </string>
+    <string name="msg_edit_to_continue">Please edit it to continue !</string>
+
+    <string name="msg_finish_test">You have finished the test</string>
+    <string name="msg_playing_audio">Playing audio...</string>
 </resources>

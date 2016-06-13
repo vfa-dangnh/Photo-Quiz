@@ -1,12 +1,10 @@
 package com.haidangkf.photoquiz;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -27,10 +25,10 @@ public class DoTestActivity extends AppCompatActivity {
     ArrayList<String> selectedItems = new ArrayList<>();
     ArrayList<Question> allQuestions = new ArrayList<>();
     ArrayList<Question> myQuestions = new ArrayList<>();
-    int numberOfQuestion;
+    int numberOfQuestion, numberOfQuestionCopy;
     private String photoPath;
     private String audioPath;
-    int count = 0;
+    int index = 0;
     int score = 0;
 
     ImageView imgPhoto;
@@ -60,10 +58,8 @@ public class DoTestActivity extends AppCompatActivity {
             }
         }
 
-        Log.i(TAG, myQuestions.size() + " questions matches.");
-        if (numberOfQuestion > myQuestions.size()) {
-            showInformDialog();
-        }
+        numberOfQuestionCopy = numberOfQuestion;
+        loadQuestion(++index); // load the first question
 
         btnPlay.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,39 +72,66 @@ public class DoTestActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 score++;
-                loadQuestion(++count);
+                loadQuestion(++index);
             }
         });
 
         btnWrong.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadQuestion(++count);
+                loadQuestion(++index);
             }
         });
 
-        loadQuestion(++count); // load the first question
-
     }
 
-    public void loadQuestion(int id) {
-        if (id > numberOfQuestion) {
-            Toast.makeText(DoTestActivity.this, "You have finished the test", Toast.LENGTH_SHORT).show();
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.i(TAG, "onResume DoTest");
+    }
+
+    public void loadQuestion(int index) {
+        if (index > numberOfQuestionCopy) {
+            Toast.makeText(DoTestActivity.this, getString(R.string.msg_finish_test), Toast.LENGTH_SHORT).show();
 
             Intent i = new Intent(DoTestActivity.this, ResultActivity.class);
-            i.putExtra("numberOfQuestion",numberOfQuestion);
-            i.putExtra("score",score);
+            i.putExtra("numberOfQuestion", numberOfQuestionCopy);
+            i.putExtra("score", score);
             startActivity(i);
+            finish();
+        } else {
+            Random rand = new Random();
+            int n = rand.nextInt(numberOfQuestion);
+            Question question = myQuestions.get(n);
+
+            photoPath = question.getPhotoPath();
+            audioPath = question.getAudioPath();
+            loadPhotoToView(photoPath);
+
+            removeQuestion(n);
         }
-
-        Random rand = new Random();
-        int n = rand.nextInt(numberOfQuestion);
-        Question question = myQuestions.get(n);
-        photoPath = question.getPhotoPath();
-        audioPath = question.getAudioPath();
-        loadPhotoToView(photoPath);
-
     }
+
+    public void removeQuestion(int n){
+        myQuestions.remove(n);
+        numberOfQuestion = myQuestions.size();
+    }
+
+//    public Question randomQuestion() {
+//        Random rand = new Random();
+//        int n = rand.nextInt(numberOfQuestion);
+//        Question question = myQuestions.get(n);
+//
+//        for (String oldQuestion : questionsHaveLoaded) {
+//            if (question.getPhotoPath().equalsIgnoreCase(oldQuestion)) {
+//                randomQuestion();
+//            }
+//        }
+//
+//        Log.i(TAG, "rand = " + n);
+//        return question;
+//    }
 
     public void loadPhotoToView(String path) {
         File imgFile = new File(path);
@@ -127,11 +150,11 @@ public class DoTestActivity extends AppCompatActivity {
             BitmapFactory.decodeStream(new FileInputStream(f), null, o);
 
             // The new size we want to scale to
-            final int REQUIRED_SIZE=70;
+            final int REQUIRED_SIZE = 70;
 
             // Find the correct scale value. It should be the power of 2.
             int scale = 1;
-            while(o.outWidth / scale / 2 >= REQUIRED_SIZE &&
+            while (o.outWidth / scale / 2 >= REQUIRED_SIZE &&
                     o.outHeight / scale / 2 >= REQUIRED_SIZE) {
                 scale *= 2;
             }
@@ -140,7 +163,8 @@ public class DoTestActivity extends AppCompatActivity {
             BitmapFactory.Options o2 = new BitmapFactory.Options();
             o2.inSampleSize = scale;
             return BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
-        } catch (FileNotFoundException e) {}
+        } catch (FileNotFoundException e) {
+        }
         return null;
     }
 
@@ -160,34 +184,7 @@ public class DoTestActivity extends AppCompatActivity {
         }
 
         m.start();
-        Toast.makeText(getApplicationContext(), "Playing audio", Toast.LENGTH_LONG).show();
-    }
-
-    public void showInformDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Warning");
-
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-                numberOfQuestion = myQuestions.size();
-            }
-        });
-
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-                finish();
-            }
-        });
-
-        String msg = "Not enough question!" + "\n";
-        msg += "The maximum number of question matches your selection is " + myQuestions.size() + "\n";
-        msg += "Press OK to continue or Cancel to exit !";
-        builder.setMessage(msg);
-        builder.create().show();
+        Toast.makeText(getApplicationContext(), getString(R.string.msg_playing_audio), Toast.LENGTH_LONG).show();
     }
 
 }

@@ -12,7 +12,6 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,13 +22,14 @@ public class CreateTestActivity extends AppCompatActivity {
 
     final String TAG = "my_log";
     private TextView tvSelectCategory;
-    private TextView tvCategory;
-    private CheckBox chkCategory;
     private EditText etNumOfQuestion;
     private Button btnCreate;
     private Button btnCancel;
     private boolean isExpandCategory = true;
     private int chkCount;
+
+    ArrayList<Question> allQuestions = new ArrayList<>();
+    ArrayList<Question> myQuestions = new ArrayList<>();
 
     private ArrayList<Category> categoryList = new ArrayList<>();
     private RecyclerView recyclerView;
@@ -86,11 +86,11 @@ public class CreateTestActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String numberOfQuestion = etNumOfQuestion.getText().toString();
                 if (numberOfQuestion.isEmpty()) {
-                    Toast.makeText(CreateTestActivity.this, "Please enter number of question", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CreateTestActivity.this, getString(R.string.msg_enter_num_ques), Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if(Integer.parseInt(numberOfQuestion)<1) {
-                    Toast.makeText(CreateTestActivity.this, "Number of question is invalid", Toast.LENGTH_SHORT).show();
+                if (Integer.parseInt(numberOfQuestion) < 1) {
+                    Toast.makeText(CreateTestActivity.this, getString(R.string.msg_num_ques_invalid), Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -103,7 +103,7 @@ public class CreateTestActivity extends AppCompatActivity {
                     }
                 }
                 if (chkCount < 1) {
-                    Toast.makeText(CreateTestActivity.this, "Please select at least 1 category", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CreateTestActivity.this, getString(R.string.msg_select_at_least), Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -111,8 +111,30 @@ public class CreateTestActivity extends AppCompatActivity {
                 Log.i(TAG, "getItemCount = " + mAdapter.getItemCount()); // count all items in Adapter
                 Log.i(TAG, "chkCount = " + chkCount);
 
+                //-----------------------------------------------
+                allQuestions = MyApplication.db.getQuestionList();
+                for (String category : selectedItems) {
+                    for (Question question : allQuestions) {
+                        if (question.getCategory().equalsIgnoreCase(category)) {
+                            myQuestions.add(question);
+                        }
+                    }
+                }
+
+                Log.i(TAG, myQuestions.size() + " questions matches.");
+                if (Integer.parseInt(numberOfQuestion) > myQuestions.size()) {
+                    String msg = getString(R.string.msg_not_enough_ques) + "\n";
+                    msg += getString(R.string.msg_max_of_ques_is) + " " + myQuestions.size() + "\n";
+                    msg += getString(R.string.msg_edit_to_continue);
+                    Toast.makeText(CreateTestActivity.this, msg, Toast.LENGTH_LONG).show();
+                    etNumOfQuestion.requestFocus();
+                    etNumOfQuestion.selectAll();
+                    return;
+                }
+                //-----------------------------------------------
+
                 Intent i = new Intent();
-                i.putExtra("numberOfQuestion",Integer.parseInt(numberOfQuestion));
+                i.putExtra("numberOfQuestion", Integer.parseInt(numberOfQuestion));
                 i.putStringArrayListExtra("categoryList", selectedItems);
                 i.setClass(CreateTestActivity.this, DoTestActivity.class);
                 startActivity(i);
@@ -132,59 +154,19 @@ public class CreateTestActivity extends AppCompatActivity {
     private void addCategoryData() {
         ArrayList<Question> list = MyApplication.db.getQuestionList();
 
-        for (Question question : list){
+        for (Question question : list) {
             Category category = new Category(question.getCategory());
             boolean isExisted = false;
-            for (Category c : categoryList){
-                if(c.getCategory().equalsIgnoreCase(category.getCategory())){
+            for (Category c : categoryList) {
+                if (c.getCategory().equalsIgnoreCase(category.getCategory())) {
                     isExisted = true;
                     break;
                 }
             }
-            if(!isExisted){
+            if (!isExisted) {
                 categoryList.add(category);
             }
         }
-
-
-//        Category category = new Category("Object");
-//        categoryList.add(category);
-//
-//        category = new Category("Scenery");
-//        categoryList.add(category);
-//
-//        category = new Category("Human");
-//        categoryList.add(category);
-//
-//        category = new Category("Actor");
-//        categoryList.add(category);
-//
-//        category = new Category("Singer");
-//        categoryList.add(category);
-//
-//        category = new Category("Device");
-//        categoryList.add(category);
-//
-//        category = new Category("Temp1");
-//        categoryList.add(category);
-//
-//        category = new Category("Temp2");
-//        categoryList.add(category);
-//
-//        category = new Category("Temp3");
-//        categoryList.add(category);
-//
-//        category = new Category("Temp4");
-//        categoryList.add(category);
-//
-//        category = new Category("Temp5");
-//        categoryList.add(category);
-//
-//        category = new Category("Temp6");
-//        categoryList.add(category);
-//
-//        category = new Category("Temp7");
-//        categoryList.add(category);
     }
 
     private void getControls() {

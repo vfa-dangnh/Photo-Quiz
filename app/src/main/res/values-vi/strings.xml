@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name">Photo Quiz</string>
+
+    <string name="lang">Vietnamese</string>
+    <string name="category">Loại</string>
+    <string name="comment">Ghi chú</string>
+    <string name="add">Thêm</string>
+    <string name="create">Tạo mới</string>
+    <string name="cancel">Huỷ</string>
+    <string name="select_category">Chọn loại</string>
+    <string name="number_of_ques">Số câu hỏi</string>
+    <string name="add_question">Thêm câu hỏi</string>
+    <string name="create_test">Tạo bài Test</string>
+    <string name="main_screen">Màn hình chính</string>
+
+    <string name="msg_record_deleted">Tệp vừa ghi đã bị xoá</string>
+    <string name="msg_file_not_exists">Tệp không tồn tại</string>
+    <string name="msg_category_comment_not_empty">Loại và ghi chú không được để trống</string>
+    <string name="msg_take_photo">Hãy chụp một tấm hình</string>
+    <string name="msg_record_voice">Hãy ghi âm giọng nói</string>
+    <string name="msg_ques_add_success">Câu hỏi đã thêm thành công</string>
+    <string name="msg_ques_add_fail">Thêm câu hỏi thất bại</string>
+    <string name="msg_is_recording">Đang ghi...</string>
+    <string name="msg_record_success">Ghi âm thành công</string>
+
+    <string name="msg_enter_num_ques">Hãy nhập số câu hỏi</string>
+    <string name="msg_num_ques_invalid">Số câu hỏi không đúng</string>
+    <string name="msg_select_at_least">Phải chọn ít nhất 1 loại</string>
+    <string name="msg_not_enough_ques">Không đủ dữ liệu câu hỏi !</string>
+    <string name="msg_max_of_ques_is">Số câu tối đa sẵn có là </string>
+    <string name="msg_edit_to_continue">Hãy sửa lại để tiếp tục !</string>
+
+    <string name="msg_finish_test">Bạn đã hoàn thành bài kiểm tra</string>
+    <string name="msg_playing_audio">Đang chạy audio...</string>
+</resources>

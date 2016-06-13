@@ -33,7 +33,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="15dp"
             android:gravity="center"
-            android:hint="Category" />
+            android:hint="@string/category" />
 
         <EditText
             android:id="@+id/etComment"
@@ -42,7 +42,7 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
             android:gravity="center"
-            android:hint="Comment" />
+            android:hint="@string/comment" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -77,13 +77,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="20dp"
-                android:text="Add" />
+                android:text="@string/add" />
 
             <Button
                 android:id="@+id/btnCancel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Cancel" />
+                android:text="@string/cancel" />
 
         </TableRow>
 

@@ -52,7 +52,6 @@ public class AddQuestionActivity extends AppCompatActivity {
         parentView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                // Log.i("focuschange", "hasFocus = " + hasFocus);
                 if (hasFocus) {
                     hideSoftKeyboard(AddQuestionActivity.this);
                 }
@@ -61,7 +60,6 @@ public class AddQuestionActivity extends AppCompatActivity {
 
 
         getControls();
-
 
         dirPath = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Photo_Quiz/Audio/");
         dirPath.mkdirs(); // make this as directory
@@ -103,9 +101,9 @@ public class AddQuestionActivity extends AppCompatActivity {
                 if (audioFile.exists()) {
                     audioFile.delete();
                     audioPath = "";
-                    Toast.makeText(AddQuestionActivity.this, "The record file has been deleted", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddQuestionActivity.this, getString(R.string.msg_record_deleted), Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(AddQuestionActivity.this, "File does not exists", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddQuestionActivity.this, getString(R.string.msg_file_not_exists), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -117,23 +115,23 @@ public class AddQuestionActivity extends AppCompatActivity {
                 String comment = etComment.getText().toString();
 
                 if (category.isEmpty() || comment.isEmpty()) {
-                    Toast.makeText(AddQuestionActivity.this, "Category and Comment cannot empty", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddQuestionActivity.this, getString(R.string.msg_category_comment_not_empty), Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 if (photoPath.isEmpty()) {
-                    Toast.makeText(AddQuestionActivity.this, "Please taking a photo", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddQuestionActivity.this, getString(R.string.msg_take_photo), Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 if (audioPath.isEmpty()) {
-                    Toast.makeText(AddQuestionActivity.this, "Please record your voice", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddQuestionActivity.this, getString(R.string.msg_record_voice), Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                Question question = new Question(category,comment,photoPath,audioPath);
-                if (MyApplication.db.addQuestion(question) > 0){
-                    Toast.makeText(AddQuestionActivity.this, "Question added successful", Toast.LENGTH_SHORT).show();
+                Question question = new Question(category, comment, photoPath, audioPath);
+                if (MyApplication.db.addQuestion(question) > 0) {
+                    Toast.makeText(AddQuestionActivity.this, getString(R.string.msg_ques_add_success), Toast.LENGTH_SHORT).show();
                     btnDelete.setEnabled(false); // disable Delete button
                     btnPhotoTaking.setBackgroundResource(R.drawable.takingphoto);
                     Bitmap transparentBitmap = BitmapFactory.decodeResource(AddQuestionActivity.this.getResources(),
@@ -141,10 +139,10 @@ public class AddQuestionActivity extends AppCompatActivity {
                     btnPhotoTaking.setImageBitmap(transparentBitmap);
                     etCategory.setText("");
                     etComment.setText("");
-                    photoPath="";
-                    audioPath="";
+                    photoPath = "";
+                    audioPath = "";
                 } else {
-                    Toast.makeText(AddQuestionActivity.this, "Failed to add question", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddQuestionActivity.this, getString(R.string.msg_ques_add_fail), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -185,11 +183,11 @@ public class AddQuestionActivity extends AppCompatActivity {
             BitmapFactory.decodeStream(new FileInputStream(f), null, o);
 
             // The new size we want to scale to
-            final int REQUIRED_SIZE=70;
+            final int REQUIRED_SIZE = 70;
 
             // Find the correct scale value. It should be the power of 2.
             int scale = 1;
-            while(o.outWidth / scale / 2 >= REQUIRED_SIZE &&
+            while (o.outWidth / scale / 2 >= REQUIRED_SIZE &&
                     o.outHeight / scale / 2 >= REQUIRED_SIZE) {
                 scale *= 2;
             }
@@ -198,7 +196,8 @@ public class AddQuestionActivity extends AppCompatActivity {
             BitmapFactory.Options o2 = new BitmapFactory.Options();
             o2.inSampleSize = scale;
             return BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
-        } catch (FileNotFoundException e) {}
+        } catch (FileNotFoundException e) {
+        }
         return null;
     }
 
@@ -223,7 +222,7 @@ public class AddQuestionActivity extends AppCompatActivity {
 
         btnDelete.setEnabled(false);
 
-        Toast.makeText(getApplicationContext(), "Recording started", Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), getString(R.string.msg_is_recording), Toast.LENGTH_LONG).show();
     }
 
     public void stopRecordAudio() {
@@ -233,7 +232,7 @@ public class AddQuestionActivity extends AppCompatActivity {
 
         btnDelete.setEnabled(true);
 
-        Toast.makeText(getApplicationContext(), "Audio recorded successfully", Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), getString(R.string.msg_record_success), Toast.LENGTH_LONG).show();
     }
 
     public void getControls() {
