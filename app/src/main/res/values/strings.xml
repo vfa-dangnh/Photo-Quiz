@@ -15,10 +15,13 @@
     <string name="create_test">Create Test</string>
     <string name="main_screen">Main Screen</string>
 
+    <string name="msg_enter_category">Please enter category</string>
+    <string name="msg_category_is">Category : </string>
+    <string name="msg_type_new_category">Type new category</string>
     <string name="msg_record_deleted">The record file has been deleted</string>
     <string name="msg_file_not_exists">File does not exists</string>
     <string name="msg_category_comment_not_empty">Category and Comment cannot empty</string>
-    <string name="msg_take_photo">Please taking a photo</string>
+    <string name="msg_take_photo">Touch camera icon to take a photo</string>
     <string name="msg_record_voice">Please record your voice</string>
     <string name="msg_ques_add_success">Question added successful</string>
     <string name="msg_ques_add_fail">Failed to add question</string>
@@ -34,4 +37,5 @@
 
     <string name="msg_finish_test">You have finished the test</string>
     <string name="msg_playing_audio">Playing audio...</string>
+
 </resources>

@@ -13,7 +13,7 @@ public class ResultActivity extends AppCompatActivity {
     Button btnMainScreen;
 
     int numberOfQuestion;
-    int score;
+    int correctAnswers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,12 +24,12 @@ public class ResultActivity extends AppCompatActivity {
         btnMainScreen = (Button) findViewById(R.id.btnMainScreen);
 
         numberOfQuestion = getIntent().getIntExtra("numberOfQuestion", 0);
-        score = getIntent().getIntExtra("score", 0);
+        correctAnswers = getIntent().getIntExtra("correctAnswers", 0);
 
         if (numberOfQuestion > 0) {
-            String f = String.format("%.0f", score * 1.0 / numberOfQuestion * 100);
-            tvYourScore.setText("Your score is " + score + "/" + numberOfQuestion +
-                    "\nScore in percentage = " + f + "%");
+            String str = String.format("%.0f", correctAnswers * 1.0 / numberOfQuestion * 100);
+            tvYourScore.setText("Correct answers: " + correctAnswers + "/" + numberOfQuestion +
+                    "\nScore in percentage = " + str + "%");
         }
 
         btnMainScreen.setOnClickListener(new View.OnClickListener() {

@@ -2,6 +2,7 @@ package com.haidangkf.photoquiz;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaRecorder;
@@ -11,10 +12,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.io.File;
@@ -22,26 +26,28 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 public class AddQuestionActivity extends AppCompatActivity {
 
     final String TAG = "my_log";
     ImageView btnPhotoTaking;
-    EditText etCategory;
+    Spinner spinnerCategory;
     EditText etComment;
-    Button btnRecord;
-    Button btnDelete;
-    Button btnAdd;
-    Button btnCancel;
+    Button btnRecord, btnDelete, btnAdd, btnCancel, btnAddNewCategory;
 
     public static String photoPath = "";
     public static String audioPath = "";
     File dirPath;
+    ArrayList<String> sampleCategories = new ArrayList<>();
+    ArrayAdapter<String> adapterSpinner;
+    String category = "";
 
     private MediaRecorder myAudioRecorder;
     private boolean isRecording = false;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,13 +63,38 @@ public class AddQuestionActivity extends AppCompatActivity {
             }
         });
 
-
         getControls();
+        sampleCategories = readSharedPreferences(); // read from Preferences
+
+        adapterSpinner = new ArrayAdapter<String>(AddQuestionActivity.this, android.R.layout.simple_spinner_item, sampleCategories);
+        adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerCategory.setAdapter(adapterSpinner);
+
+        spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                category = sampleCategories.get(position);
+//                Toast.makeText(AddQuestionActivity.this, getString(R.string.msg_category_is) + " " + category, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // do nothing
+            }
+        });
 
         dirPath = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Photo_Quiz/Audio/");
         dirPath.mkdirs(); // make this as directory
 
         btnDelete.setEnabled(false); // disable Delete button
+
+        btnAddNewCategory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(AddQuestionActivity.this, AddMoreCategoryActivity.class);
+                startActivityForResult(intent, 2);
+            }
+        });
 
         btnPhotoTaking.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -112,7 +143,6 @@ public class AddQuestionActivity extends AppCompatActivity {
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String category = etCategory.getText().toString();
                 String comment = etComment.getText().toString();
 
                 if (category.isEmpty() || comment.isEmpty()) {
@@ -138,7 +168,7 @@ public class AddQuestionActivity extends AppCompatActivity {
                     Bitmap transparentBitmap = BitmapFactory.decodeResource(AddQuestionActivity.this.getResources(),
                             R.drawable.transparent_background);
                     btnPhotoTaking.setImageBitmap(transparentBitmap);
-                    etCategory.setText("");
+//                    etCategory.setText("");
                     etComment.setText("");
                     photoPath = "";
                     audioPath = "";
@@ -158,6 +188,18 @@ public class AddQuestionActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // Nếu gói dữ liệu có mã nhận là 2 (add more category)
+        if (resultCode == 2) {
+            Bundle bundle = data.getBundleExtra("DATA_CATEGORY");
+            sampleCategories.add(bundle.getString("newCategory"));
+            saveSharedPreferences(sampleCategories);
+            adapterSpinner.notifyDataSetChanged();
+        }
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         Log.i(TAG, "onResume AddQuestionActivity");
@@ -165,6 +207,13 @@ public class AddQuestionActivity extends AppCompatActivity {
         reloadPhotoToView(photoPath);
         Log.i(TAG, "photoPath = " + photoPath);
     }
+
+//    public void AddSampleCategories() {
+//        sampleCategories.add("Object");
+//        sampleCategories.add("Human");
+//        sampleCategories.add("Animal");
+//        sampleCategories.add("Scenery");
+//    }
 
     public void reloadPhotoToView(String path) {
         File imgFile = new File(path);
@@ -236,10 +285,38 @@ public class AddQuestionActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), getString(R.string.msg_record_success), Toast.LENGTH_LONG).show();
     }
 
+    public void saveSharedPreferences(ArrayList<String> categoriesList) {
+        SharedPreferences pre = getSharedPreferences("my_categories", MODE_PRIVATE);
+        SharedPreferences.Editor editor = pre.edit();
+        Set<String> set = new HashSet<>();
+        for (String s : categoriesList) {
+            set.add(s);
+        }
+        // lưu Set<String> vào key=categories
+        editor.putStringSet("categories", set);
+        editor.commit();
+    }
+
+    public ArrayList<String> readSharedPreferences() {
+        SharedPreferences pre = getSharedPreferences("my_categories", MODE_PRIVATE);
+
+        Set<String> newSet = new HashSet<>();
+        newSet.add("Object");
+        newSet.add("Animal");
+        newSet.add("Human");
+        newSet.add("Scenery");
+
+// lấy Set lưu trong key=categories, không có thì gán giá trị mặc định là newSet
+        Set<String> set = pre.getStringSet("categories", newSet);
+        ArrayList<String> list = new ArrayList<>(set);
+        return list;
+    }
+
     public void getControls() {
         btnPhotoTaking = (ImageView) findViewById(R.id.btnPhotoTaking);
-        etCategory = (EditText) findViewById(R.id.etCategory);
+        spinnerCategory = (Spinner) findViewById(R.id.spinnerCategory);
         etComment = (EditText) findViewById(R.id.etComment);
+        btnAddNewCategory = (Button) findViewById(R.id.btnAddNewCategory);
         btnRecord = (Button) findViewById(R.id.btnRecord);
         btnDelete = (Button) findViewById(R.id.btnDelete);
         btnAdd = (Button) findViewById(R.id.btnAdd);

@@ -29,7 +29,7 @@ public class DoTestActivity extends AppCompatActivity {
     private String photoPath;
     private String audioPath;
     int index = 0;
-    int score = 0;
+    int correctAnswers = 0;
 
     ImageView imgPhoto;
     ImageButton btnPlay, btnRight, btnWrong;
@@ -71,7 +71,7 @@ public class DoTestActivity extends AppCompatActivity {
         btnRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                score++;
+                correctAnswers++;
                 loadQuestion(++index);
             }
         });
@@ -97,7 +97,7 @@ public class DoTestActivity extends AppCompatActivity {
 
             Intent i = new Intent(DoTestActivity.this, ResultActivity.class);
             i.putExtra("numberOfQuestion", numberOfQuestionCopy);
-            i.putExtra("score", score);
+            i.putExtra("correctAnswers", correctAnswers);
             startActivity(i);
             finish();
         } else {
