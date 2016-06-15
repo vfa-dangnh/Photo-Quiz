@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="5dp"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="5dp"
+    android:background="@drawable/custom_btn_sandrift"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/imgPhoto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@drawable/transparent_background" />
+
+    <ImageButton
+        android:id="@+id/btnPlay"
+        android:layout_width="80dp"
+        android:layout_height="56dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="20dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/btn_play" />
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="120dp">
+
+        <ImageButton
+            android:id="@+id/btnRight"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginRight="20dp"
+            android:layout_weight="1"
+            android:background="@drawable/btn_check_right" />
+
+        <ImageButton
+            android:id="@+id/btnWrong"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="20dp"
+            android:layout_weight="1"
+            android:background="@drawable/btn_check_wrong" />
+    </TableRow>
+
+</LinearLayout>

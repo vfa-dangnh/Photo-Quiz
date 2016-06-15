@@ -4,48 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingBottom="5dp"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="5dp"
-    android:background="@drawable/custom_btn_sandrift"
     tools:context=".DoTestActivity">
 
-    <ImageView
-        android:id="@+id/imgPhoto"
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:background="@drawable/transparent_background" />
-
-    <ImageButton
-        android:id="@+id/btnPlay"
-        android:layout_width="80dp"
-        android:layout_height="56dp"
-        android:layout_gravity="center"
-        android:layout_marginBottom="20dp"
-        android:layout_marginTop="5dp"
-        android:background="@drawable/btn_play" />
-
-    <TableRow
-        android:layout_width="match_parent"
-        android:layout_height="120dp">
-
-        <ImageButton
-            android:id="@+id/btnRight"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginRight="20dp"
-            android:layout_weight="1"
-            android:background="@drawable/btn_check_right" />
-
-        <ImageButton
-            android:id="@+id/btnWrong"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="20dp"
-            android:layout_weight="1"
-            android:background="@drawable/btn_check_wrong" />
-    </TableRow>
+        android:layout_height="match_parent">
+    </android.support.v4.view.ViewPager>
 
 </LinearLayout>

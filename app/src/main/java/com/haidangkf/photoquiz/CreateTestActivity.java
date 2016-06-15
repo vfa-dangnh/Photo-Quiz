@@ -131,6 +131,7 @@ public class CreateTestActivity extends AppCompatActivity {
                     msg += getString(R.string.msg_max_of_ques_is) + " " + myQuestions.size() + "\n";
                     msg += getString(R.string.msg_edit_to_continue);
                     Toast.makeText(CreateTestActivity.this, msg, Toast.LENGTH_LONG).show();
+                    myQuestions.removeAll(allQuestions); // delete all added questions in list
                     etNumOfQuestion.requestFocus();
                     etNumOfQuestion.selectAll();
                     return;
