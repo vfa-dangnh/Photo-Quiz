@@ -7,32 +7,63 @@ import android.util.Log;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class DoTestActivity extends AppCompatActivity {
 
+    final String TAG = "my_log";
     ViewPager viewPager;
     MyPagerAdapter myPagerAdapter;
-    // -----------------------------------------------
-    final String TAG = "my_log";
-    public static ArrayList<String> selectedItems = new ArrayList<>();
-    public static int numberOfQuestion;
-    public static int _position;
 
+    // -----------------------------------------------
+    ArrayList<String> selectedItems = new ArrayList<>();
+    ArrayList<Question> allQuestions = new ArrayList<>();
+    ArrayList<Question> matchQuestions = new ArrayList<>();
+    ArrayList<Question> myTestQuestions;
+    int numberOfQuestion;
+    // -----------------------------------------------
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_do_test);
 
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
-        myPagerAdapter = new MyPagerAdapter();
-        viewPager.setAdapter(myPagerAdapter);
-        viewPager.setCurrentItem(0);
-        viewPager.setOnPageChangeListener(pageChangeListener);
-
         selectedItems = getIntent().getStringArrayListExtra("categoryList");
         numberOfQuestion = getIntent().getIntExtra("numberOfQuestion", 0);
+        Log.i(TAG, "selectedItems = " + selectedItems.toString());
+        Log.i(TAG, "numberOfQuestion = " + numberOfQuestion);
 
+        allQuestions = MyApplication.db.getQuestionList();
+        for (String category : selectedItems) {
+            for (Question question : allQuestions) {
+                if (question.getCategory().equalsIgnoreCase(category)) {
+                    matchQuestions.add(question);
+                }
+            }
+        }
+
+        myTestQuestions = randomMyTestQuestions(matchQuestions,numberOfQuestion);
+
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        myPagerAdapter = new MyPagerAdapter(this,myTestQuestions);
+        viewPager.setAdapter(myPagerAdapter);
+        viewPager.setCurrentItem(0); // set the item to view first
+        viewPager.setOnPageChangeListener(pageChangeListener);
+//        viewPager.refreshDrawableState(); // don't know what it is
+
+    }
+
+    public ArrayList<Question> randomMyTestQuestions(ArrayList<Question> questionList,
+                                                     int quantity){
+        ArrayList<Question> returnQuestions = new ArrayList<>();
+        for (int i=0; i<quantity; i++){
+            Random rand = new Random();
+            int n = rand.nextInt(questionList.size());
+            returnQuestions.add(questionList.get(n));
+            questionList.remove(n); // delete this question in list after getting it
+        }
+
+        return returnQuestions;
     }
 
     @Override
@@ -59,8 +90,11 @@ public class DoTestActivity extends AppCompatActivity {
         @Override
         public void onPageSelected(int position) {
             //This method will be invoked when a new page becomes selected.
-            _position = position;
-            Toast.makeText(DoTestActivity.this, "Page " + position, Toast.LENGTH_SHORT).show();
+            Toast.makeText(DoTestActivity.this, "Question " + (position+1), Toast.LENGTH_SHORT).show();
+            if (position==viewPager.getAdapter().getCount()-1){
+//start next Activity
+            }
+            Toast.makeText(DoTestActivity.this, "", Toast.LENGTH_SHORT).show();
         }
     };
 

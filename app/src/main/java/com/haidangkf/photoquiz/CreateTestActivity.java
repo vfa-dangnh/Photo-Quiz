@@ -30,7 +30,7 @@ public class CreateTestActivity extends AppCompatActivity {
     private int chkCount;
 
     ArrayList<Question> allQuestions = new ArrayList<>();
-    ArrayList<Question> myQuestions = new ArrayList<>();
+    ArrayList<Question> matchQuestions = new ArrayList<>();
 
     private ArrayList<Category> categoryList = new ArrayList<>();
     private RecyclerView recyclerView;
@@ -120,18 +120,18 @@ public class CreateTestActivity extends AppCompatActivity {
                 for (String category : selectedItems) {
                     for (Question question : allQuestions) {
                         if (question.getCategory().equalsIgnoreCase(category)) {
-                            myQuestions.add(question);
+                            matchQuestions.add(question);
                         }
                     }
                 }
 
-                Log.i(TAG, myQuestions.size() + " questions matches.");
-                if (Integer.parseInt(numberOfQuestion) > myQuestions.size()) {
+                Log.i(TAG, matchQuestions.size() + " questions match.");
+                if (Integer.parseInt(numberOfQuestion) > matchQuestions.size()) {
                     String msg = getString(R.string.msg_not_enough_ques) + "\n";
-                    msg += getString(R.string.msg_max_of_ques_is) + " " + myQuestions.size() + "\n";
+                    msg += getString(R.string.msg_max_of_ques_is) + " " + matchQuestions.size() + "\n";
                     msg += getString(R.string.msg_edit_to_continue);
                     Toast.makeText(CreateTestActivity.this, msg, Toast.LENGTH_LONG).show();
-                    myQuestions.removeAll(allQuestions); // delete all added questions in list
+                    matchQuestions.removeAll(allQuestions); // delete all added questions in list
                     etNumOfQuestion.requestFocus();
                     etNumOfQuestion.selectAll();
                     return;
