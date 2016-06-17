@@ -26,6 +26,11 @@ public class Question {
         this.setAudioPath(audioPath);
     }
 
+    @Override
+    public String toString() {
+        return "Category = " + category + ", Comment = " + comment
+                + "\nPhotoPath = " + photoPath + "\nAudioPath = " + audioPath;
+    }
 
     public int getId() {
         return id;

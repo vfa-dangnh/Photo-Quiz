@@ -6,6 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.viewpagerindicator.CirclePageIndicator;
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -14,6 +16,7 @@ public class DoTestActivity extends AppCompatActivity {
     final String TAG = "my_log";
     ViewPager viewPager;
     MyPagerAdapter myPagerAdapter;
+    CirclePageIndicator mIndicator;
 
     // -----------------------------------------------
     ArrayList<String> selectedItems = new ArrayList<>();
@@ -42,25 +45,35 @@ public class DoTestActivity extends AppCompatActivity {
             }
         }
 
-        myTestQuestions = randomMyTestQuestions(matchQuestions,numberOfQuestion);
+        myTestQuestions = randomMyTestQuestions(matchQuestions, numberOfQuestion);
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
-        myPagerAdapter = new MyPagerAdapter(this,myTestQuestions);
+        myPagerAdapter = new MyPagerAdapter(this, myTestQuestions);
         viewPager.setAdapter(myPagerAdapter);
         viewPager.setCurrentItem(0); // set the item to view first
         viewPager.setOnPageChangeListener(pageChangeListener);
-//        viewPager.refreshDrawableState(); // don't know what it is
+
+        // ViewPager Indicator
+//        mIndicator = (CirclePageIndicator) findViewById(R.id.indicator);
+//        mIndicator.setStrokeColor(Color.RED); // màu viền cho ký hiệu
+//        mIndicator.setFillColor(Color.BLUE); // màu nền cho ký hiệu đang chọn
+//        mIndicator.setPageColor(Color.GREEN); // màu nền cho ký hiệu không được chọn
+//        mIndicator.setBackgroundColor(Color.YELLOW); // màu nền Indicator Bar
+//        mIndicator.setViewPager(viewPager);
 
     }
 
     public ArrayList<Question> randomMyTestQuestions(ArrayList<Question> questionList,
-                                                     int quantity){
+                                                     int quantity) {
         ArrayList<Question> returnQuestions = new ArrayList<>();
-        for (int i=0; i<quantity; i++){
+        for (int i = 0; i < quantity; i++) {
             Random rand = new Random();
             int n = rand.nextInt(questionList.size());
             returnQuestions.add(questionList.get(n));
             questionList.remove(n); // delete this question in list after getting it
+        }
+        for (Question question : returnQuestions){
+            Log.i(TAG, "question: "+question.toString());
         }
 
         return returnQuestions;
@@ -88,13 +101,12 @@ public class DoTestActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onPageSelected(int position) {
+        public void onPageSelected(final int position) {
             //This method will be invoked when a new page becomes selected.
-            Toast.makeText(DoTestActivity.this, "Question " + (position+1), Toast.LENGTH_SHORT).show();
-            if (position==viewPager.getAdapter().getCount()-1){
-//start next Activity
+            if (position == viewPager.getAdapter().getCount() - 1) {
+                // start next Activity
+                Toast.makeText(DoTestActivity.this, getString(R.string.msg_finish_test), Toast.LENGTH_SHORT).show();
             }
-            Toast.makeText(DoTestActivity.this, "", Toast.LENGTH_SHORT).show();
         }
     };
 

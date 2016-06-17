@@ -6,14 +6,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.io.File;
@@ -29,8 +28,9 @@ public class MyPagerAdapter extends PagerAdapter {
     private LayoutInflater layoutInflater;
     ArrayList<Question> myTestQuestions;
     // -------------------------
-    private String photoPath;
-    private String audioPath;
+
+    private String photoPath = "";
+    private String audioPath = "";
 
     ImageView imgPhoto;
     Button btnPlay;
@@ -44,30 +44,28 @@ public class MyPagerAdapter extends PagerAdapter {
     }
 
     @Override
-    public Object instantiateItem(ViewGroup container, int position) {
+    public Object instantiateItem(ViewGroup container, final int position) {
+        Log.i(TAG, "instantiate Item " + position);
 //        LayoutInflater layoutInflater = (LayoutInflater) container.getContext()
 //                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         layoutInflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         int layout_id = R.layout.layout_activity_do_test;
-        View view = layoutInflater.inflate(layout_id, null);
+        final View view = layoutInflater.inflate(layout_id, null);
 
         view.setTag(position);
-//        view.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                int thisPosition = (Integer) v.getTag();
-//                Toast.makeText(activity, "You clicked on page " + thisPosition, Toast.LENGTH_SHORT).show();
-//                Log.i(TAG, "You clicked on page " + thisPosition);
-//            }
-//        });
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int thisPosition = (int) v.getTag();
+                Log.i(TAG, "You clicked on page " + thisPosition);
+                loadQuestion(view, position);
+            }
+        });
 
         // ****************************************
-        imgPhoto = (ImageView) view.findViewById(R.id.imgPhoto);
-        btnPlay = (Button) view.findViewById(R.id.btnPlay);
-        btnRight = (ImageButton) view.findViewById(R.id.btnRight);
-        btnWrong = (ImageButton) view.findViewById(R.id.btnWrong);
+        findViewById(view);
 
-        loadQuestion(position); // load the question at position to screen
+        loadQuestion(view, position); // load the question at position to screen
 
         btnPlay.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,19 +90,18 @@ public class MyPagerAdapter extends PagerAdapter {
 
         // ****************************************
 
-        ((ViewPager) container).addView(view);
-//        ((ViewPager) container).addView(view, 0);
+        container.addView(view);
         return view;
     }
 
     @Override
-    public int getCount() { // number of pages can view
-        return myTestQuestions.size()+1;
+    public int getItemPosition(Object object){
+        return POSITION_NONE;
     }
 
     @Override
-    public int getItemPosition(Object object) {
-        return 0;
+    public int getCount() { // number of pages can view
+        return myTestQuestions.size();
     }
 
     @Override
@@ -114,22 +111,26 @@ public class MyPagerAdapter extends PagerAdapter {
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-        container.removeView((LinearLayout) object);
+        Log.i(TAG, "destroy Item " + position);
+        container.removeView((View) object);
     }
 
-    public void loadQuestion(int position) {
-        if (position==myTestQuestions.size()){ // nếu đang ở page cuối cùng
-            Toast.makeText(activity, "You are at the last page", Toast.LENGTH_SHORT).show();
-            return;
-        }
+    public void findViewById(View view) {
+        btnPlay = (Button) view.findViewById(R.id.btnPlay);
+        btnRight = (ImageButton) view.findViewById(R.id.btnRight);
+        btnWrong = (ImageButton) view.findViewById(R.id.btnWrong);
+    }
+
+    public void loadQuestion(View view, int position) {
         Question question = myTestQuestions.get(position);
         photoPath = question.getPhotoPath();
         audioPath = question.getAudioPath();
-        loadPhotoToView(photoPath);
-//        Toast.makeText(activity, activity.getString(R.string.msg_finish_test), Toast.LENGTH_SHORT).show();
+        loadPhotoToView(view, photoPath);
+//        playAudio(audioPath); // thử cái này xem sao
     }
 
-    public void loadPhotoToView(String path) {
+    public void loadPhotoToView(View view, String path) {
+        imgPhoto = (ImageView) view.findViewById(R.id.imgPhoto);
         File imgFile = new File(path);
         if (imgFile.exists()) {
             Bitmap myBitmap = decodeFile(imgFile);
