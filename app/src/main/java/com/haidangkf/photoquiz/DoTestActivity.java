@@ -72,8 +72,10 @@ public class DoTestActivity extends AppCompatActivity {
             returnQuestions.add(questionList.get(n));
             questionList.remove(n); // delete this question in list after getting it
         }
-        for (Question question : returnQuestions){
-            Log.i(TAG, "question: "+question.toString());
+
+        int x = 0;
+        for (Question question : returnQuestions) {
+            Log.i(TAG, "question " + (++x) + ": " + question.toString());
         }
 
         return returnQuestions;
@@ -103,10 +105,12 @@ public class DoTestActivity extends AppCompatActivity {
         @Override
         public void onPageSelected(final int position) {
             //This method will be invoked when a new page becomes selected.
+
             if (position == viewPager.getAdapter().getCount() - 1) {
-                // start next Activity
                 Toast.makeText(DoTestActivity.this, getString(R.string.msg_finish_test), Toast.LENGTH_SHORT).show();
+                // can start new Activity here
             }
+
         }
     };
 

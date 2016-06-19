@@ -2,6 +2,7 @@ package com.haidangkf.photoquiz;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
@@ -11,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -30,10 +32,10 @@ public class MyPagerAdapter extends PagerAdapter {
     // -------------------------
 
     private String photoPath = "";
-    private String audioPath = "";
 
+    FrameLayout frameDone;
     ImageView imgPhoto;
-    Button btnPlay;
+    Button btnPlay, btnDone;
     ImageButton btnRight, btnWrong;
     // -------------------------
 
@@ -41,6 +43,7 @@ public class MyPagerAdapter extends PagerAdapter {
     public MyPagerAdapter(Activity activity, ArrayList<Question> myTestQuestions) {
         this.activity = activity;
         this.myTestQuestions = myTestQuestions;
+        Log.i(TAG, "enter Constructor");
     }
 
     @Override
@@ -53,38 +56,38 @@ public class MyPagerAdapter extends PagerAdapter {
         final View view = layoutInflater.inflate(layout_id, null);
 
         view.setTag(position);
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int thisPosition = (int) v.getTag();
-                Log.i(TAG, "You clicked on page " + thisPosition);
-                loadQuestion(view, position);
-            }
-        });
+//        view.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                int thisPosition = (int) v.getTag();
+//                Log.i(TAG, "You clicked on page " + thisPosition);
+//            }
+//        });
 
         // ****************************************
         findViewById(view);
 
-        loadQuestion(view, position); // load the question at position to screen
+        loadQuestion(position); // load the question at position to screen
 
         btnPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                playAudio(audioPath);
+                Log.i(TAG, "Playing audio at " + position);
+                playAudio(myTestQuestions.get(position).getAudioPath());
             }
         });
 
         btnRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(activity, "Clicked Right", Toast.LENGTH_SHORT).show();
+                Log.i(TAG, "Position = " + position + " , Clicked Right");
             }
         });
 
         btnWrong.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(activity, "Clicked Wrong", Toast.LENGTH_SHORT).show();
+                Log.i(TAG, "Position = " + position + " , Clicked Wrong");
             }
         });
 
@@ -95,13 +98,8 @@ public class MyPagerAdapter extends PagerAdapter {
     }
 
     @Override
-    public int getItemPosition(Object object){
-        return POSITION_NONE;
-    }
-
-    @Override
     public int getCount() { // number of pages can view
-        return myTestQuestions.size();
+        return myTestQuestions.size() + 1;
     }
 
     @Override
@@ -116,21 +114,40 @@ public class MyPagerAdapter extends PagerAdapter {
     }
 
     public void findViewById(View view) {
+        frameDone = (FrameLayout) view.findViewById(R.id.frameDone);
+        btnDone = (Button) view.findViewById(R.id.btnDone);
+        imgPhoto = (ImageView) view.findViewById(R.id.imgPhoto);
         btnPlay = (Button) view.findViewById(R.id.btnPlay);
         btnRight = (ImageButton) view.findViewById(R.id.btnRight);
         btnWrong = (ImageButton) view.findViewById(R.id.btnWrong);
     }
 
-    public void loadQuestion(View view, int position) {
+    public void loadQuestion(int position) {
+        if (position == getCount() - 1) { // đang ở trang cuối cùng (đã làm xong bài test)
+            imgPhoto.setVisibility(View.GONE);
+            btnPlay.setVisibility(View.GONE);
+            btnRight.setVisibility(View.GONE);
+            btnWrong.setVisibility(View.GONE);
+
+            frameDone.setVisibility(View.VISIBLE);
+            btnDone.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(activity, ResultActivity.class);
+                    activity.startActivity(i);
+                    activity.finish();
+                }
+            });
+            return;
+        }
+
         Question question = myTestQuestions.get(position);
         photoPath = question.getPhotoPath();
-        audioPath = question.getAudioPath();
-        loadPhotoToView(view, photoPath);
-//        playAudio(audioPath); // thử cái này xem sao
+        loadPhotoToView(photoPath);
+        Log.i(TAG, "comment = " + question.getComment());
     }
 
-    public void loadPhotoToView(View view, String path) {
-        imgPhoto = (ImageView) view.findViewById(R.id.imgPhoto);
+    public void loadPhotoToView(String path) {
         File imgFile = new File(path);
         if (imgFile.exists()) {
             Bitmap myBitmap = decodeFile(imgFile);
