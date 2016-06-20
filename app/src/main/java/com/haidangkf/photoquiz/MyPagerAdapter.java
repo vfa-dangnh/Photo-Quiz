@@ -22,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MyPagerAdapter extends PagerAdapter {
 
@@ -32,6 +33,7 @@ public class MyPagerAdapter extends PagerAdapter {
     // -------------------------
 
     private String photoPath = "";
+    HashMap<Integer, Integer> answerMap;
 
     FrameLayout frameDone;
     ImageView imgPhoto;
@@ -40,9 +42,11 @@ public class MyPagerAdapter extends PagerAdapter {
     // -------------------------
 
     // constructor
-    public MyPagerAdapter(Activity activity, ArrayList<Question> myTestQuestions) {
+    public MyPagerAdapter(Activity activity, ArrayList<Question> myTestQuestions,
+                          HashMap<Integer, Integer> answerMap) {
         this.activity = activity;
         this.myTestQuestions = myTestQuestions;
+        this.answerMap = answerMap;
         Log.i(TAG, "enter Constructor");
     }
 
@@ -81,6 +85,7 @@ public class MyPagerAdapter extends PagerAdapter {
             @Override
             public void onClick(View v) {
                 Log.i(TAG, "Position = " + position + " , Clicked Right");
+                answerMap.put(position, 1);
             }
         });
 
@@ -88,6 +93,7 @@ public class MyPagerAdapter extends PagerAdapter {
             @Override
             public void onClick(View v) {
                 Log.i(TAG, "Position = " + position + " , Clicked Wrong");
+                answerMap.put(position, 0);
             }
         });
 
@@ -133,7 +139,16 @@ public class MyPagerAdapter extends PagerAdapter {
             btnDone.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    for (int i = 0; i < answerMap.size(); i++) {
+                        if (answerMap.get(i) == -1) {
+                            Toast.makeText(activity, activity.getString(R.string.msg_have_not_answer_all) + (i+1), Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    }
+
                     Intent i = new Intent(activity, ResultActivity.class);
+                    i.putExtra("numberOfQuestion", myTestQuestions.size());
+                    i.putExtra("answerMap", answerMap);
                     activity.startActivity(i);
                     activity.finish();
                 }

@@ -1,6 +1,7 @@
 package com.haidangkf.photoquiz;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -26,9 +28,6 @@ public class ViewQuestionActivity extends AppCompatActivity {
     private Button btnCancel;
     private boolean isExpandCategory = true;
     private int chkCount;
-
-    ArrayList<Question> allQuestions = new ArrayList<>();
-    ArrayList<Question> matchQuestions = new ArrayList<>();
 
     private ArrayList<Category> categoryList = new ArrayList<>();
     private RecyclerView recyclerView;
@@ -83,65 +82,66 @@ public class ViewQuestionActivity extends AppCompatActivity {
             }
         });
 
+        tvSelectAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (chkSelectAll.isChecked()) {
+                    chkSelectAll.setChecked(false);
+                    recyclerView.setVisibility(View.VISIBLE);
+                } else {
+                    chkSelectAll.setChecked(true);
+                    recyclerView.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
+
+        chkSelectAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (chkSelectAll.isChecked()) {
+                    recyclerView.setVisibility(View.INVISIBLE);
+                } else {
+                    recyclerView.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
         btnView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*String numberOfQuestion = etNumOfQuestion.getText().toString();
-                if (numberOfQuestion.isEmpty()) {
-                    Toast.makeText(CreateTestActivity.this, getString(R.string.msg_enter_num_ques), Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (Integer.parseInt(numberOfQuestion) < 1) {
-                    Toast.makeText(CreateTestActivity.this, getString(R.string.msg_num_ques_invalid), Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                chkCount = 0;
-                ArrayList<String> selectedItems = new ArrayList<String>();
-                for (int x = 0; x < categoryList.size(); x++) {
-                    if (categoryList.get(x).isSelected()) {
-                        chkCount++;
+                if (chkSelectAll.isChecked()) {
+                    ArrayList<String> selectedItems = new ArrayList<String>();
+                    for (int x = 0; x < categoryList.size(); x++) {
                         selectedItems.add(categoryList.get(x).getCategory());
                     }
-                }
-                if (chkCount < 1) {
-                    Toast.makeText(CreateTestActivity.this, getString(R.string.msg_select_at_least), Toast.LENGTH_SHORT).show();
-                    return;
-                }
 
-                Log.i(TAG, "getChildCount = " + recyclerView.getChildCount()); // count visible items on screen
-                Log.i(TAG, "getItemCount = " + mAdapter.getItemCount()); // count all items in Adapter
-                Log.i(TAG, "chkCount = " + chkCount);
+                    Intent i = new Intent();
+                    i.putStringArrayListExtra("categoryList", selectedItems);
+                    i.setClass(ViewQuestionActivity.this, QuestionListActivity.class);
+                    startActivity(i);
+                } else {
 
-                //-----------------------------------------------
-                allQuestions = MyApplication.db.getQuestionList();
-                for (String category : selectedItems) {
-                    for (Question question : allQuestions) {
-                        if (question.getCategory().equalsIgnoreCase(category)) {
-                            matchQuestions.add(question);
+                    chkCount = 0;
+                    ArrayList<String> selectedItems = new ArrayList<String>();
+                    for (int x = 0; x < categoryList.size(); x++) {
+                        if (categoryList.get(x).isSelected()) {
+                            chkCount++;
+                            selectedItems.add(categoryList.get(x).getCategory());
                         }
                     }
+
+                    if (chkCount < 1) {
+                        Toast.makeText(ViewQuestionActivity.this, getString(R.string.msg_select_at_least), Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    Intent i = new Intent();
+                    i.putStringArrayListExtra("categoryList", selectedItems);
+                    i.setClass(ViewQuestionActivity.this, QuestionListActivity.class);
+                    startActivity(i);
                 }
 
-                Log.i(TAG, matchQuestions.size() + " questions match.");
-                if (Integer.parseInt(numberOfQuestion) > matchQuestions.size()) {
-                    String msg = getString(R.string.msg_not_enough_ques) + "\n";
-                    msg += getString(R.string.msg_max_of_ques_is) + " " + matchQuestions.size() + "\n";
-                    msg += getString(R.string.msg_edit_to_continue);
-                    Toast.makeText(CreateTestActivity.this, msg, Toast.LENGTH_LONG).show();
-                    matchQuestions.removeAll(allQuestions); // delete all added questions in list
-                    etNumOfQuestion.requestFocus();
-                    etNumOfQuestion.selectAll();
-                    return;
-                }
-                //-----------------------------------------------
-
-                Intent i = new Intent();
-                i.putExtra("numberOfQuestion", Integer.parseInt(numberOfQuestion));
-                i.putStringArrayListExtra("categoryList", selectedItems);
-                i.setClass(CreateTestActivity.this, DoTestActivity.class);
-                startActivity(i);
-                finish();*/
+                finish();
             }
         });
 

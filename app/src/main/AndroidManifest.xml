@@ -45,7 +45,10 @@
             android:name=".AddMoreCategoryActivity"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.Dialog.NoActionBar.MinWidth" />
-        <activity android:name=".ViewQuestionActivity"></activity>
+        <activity android:name=".ViewQuestionActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".QuestionListActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

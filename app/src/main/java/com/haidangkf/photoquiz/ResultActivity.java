@@ -1,19 +1,24 @@
 package com.haidangkf.photoquiz;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.HashMap;
+
 public class ResultActivity extends AppCompatActivity {
 
+    final String TAG = "my_log";
     TextView tvYourScore;
     Button btnMainScreen;
 
+    HashMap<Integer, Integer> answerMap;
     int numberOfQuestion;
-    int correctAnswers;
+    int correctAnswers=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,8 +28,17 @@ public class ResultActivity extends AppCompatActivity {
         tvYourScore = (TextView) findViewById(R.id.tvYourScore);
         btnMainScreen = (Button) findViewById(R.id.btnMainScreen);
 
-        numberOfQuestion = getIntent().getIntExtra("numberOfQuestion", 0);
-        correctAnswers = getIntent().getIntExtra("correctAnswers", 0);
+        Intent intent = getIntent();
+        numberOfQuestion = intent.getIntExtra("numberOfQuestion",0);
+        answerMap = (HashMap<Integer, Integer>) intent.getSerializableExtra("answerMap");
+        Log.i(TAG, "numberOfQuestion = "+numberOfQuestion);
+        Log.i(TAG, "answerMap Size = "+answerMap.size());
+
+        for (int i=0; i<answerMap.size(); i++){
+            if (answerMap.get(i)==1){
+                correctAnswers++;
+            }
+        }
 
         if (numberOfQuestion > 0) {
             String str = String.format("%.0f", correctAnswers * 1.0 / numberOfQuestion * 100);

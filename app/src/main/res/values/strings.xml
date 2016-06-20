@@ -12,6 +12,7 @@
     <string name="select_category">Select Category</string>
     <string name="number_of_ques">Number of Question</string>
     <string name="add_question">Add Question</string>
+    <string name="view_question">View Question</string>
     <string name="create_test">Create Test</string>
     <string name="main_screen">Main Screen</string>
 
@@ -35,7 +36,11 @@
     <string name="msg_max_of_ques_is">The maximum number of question matches your selection is </string>
     <string name="msg_edit_to_continue">Please edit it to continue !</string>
 
-    <string name="msg_finish_test">You have finished the test</string>
+    <string name="msg_reach_last_page">You have reached the last page</string>
     <string name="msg_playing_audio">Playing audio...</string>
+    <string name="msg_list_of_question">List of Question</string>
+    <string name="msg_back">Back</string>
+    <string name="msg_done">DONE</string>
+    <string name="msg_have_not_answer_all">You have not answered all questions.\nPlease back to question</string>
 
 </resources>

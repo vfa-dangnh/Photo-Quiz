@@ -9,6 +9,7 @@ import android.widget.Toast;
 import com.viewpagerindicator.CirclePageIndicator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
 public class DoTestActivity extends AppCompatActivity {
@@ -24,6 +25,7 @@ public class DoTestActivity extends AppCompatActivity {
     ArrayList<Question> matchQuestions = new ArrayList<>();
     ArrayList<Question> myTestQuestions;
     int numberOfQuestion;
+    HashMap<Integer, Integer> answerMap = new HashMap<>();
     // -----------------------------------------------
 
     @Override
@@ -46,9 +48,12 @@ public class DoTestActivity extends AppCompatActivity {
         }
 
         myTestQuestions = randomMyTestQuestions(matchQuestions, numberOfQuestion);
+        for (int i = 0; i < numberOfQuestion; i++) {
+            answerMap.put(i, -1);
+        }
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
-        myPagerAdapter = new MyPagerAdapter(this, myTestQuestions);
+        myPagerAdapter = new MyPagerAdapter(this, myTestQuestions, answerMap);
         viewPager.setAdapter(myPagerAdapter);
         viewPager.setCurrentItem(0); // set the item to view first
         viewPager.setOnPageChangeListener(pageChangeListener);
@@ -75,7 +80,7 @@ public class DoTestActivity extends AppCompatActivity {
 
         int x = 0;
         for (Question question : returnQuestions) {
-            Log.i(TAG, "question " + (++x) + ": " + question.toString());
+            Log.i(TAG, "Question " + (++x) + ": " + question.toString());
         }
 
         return returnQuestions;
@@ -107,7 +112,7 @@ public class DoTestActivity extends AppCompatActivity {
             //This method will be invoked when a new page becomes selected.
 
             if (position == viewPager.getAdapter().getCount() - 1) {
-                Toast.makeText(DoTestActivity.this, getString(R.string.msg_finish_test), Toast.LENGTH_SHORT).show();
+                Toast.makeText(DoTestActivity.this, getString(R.string.msg_reach_last_page), Toast.LENGTH_SHORT).show();
                 // can start new Activity here
             }
 

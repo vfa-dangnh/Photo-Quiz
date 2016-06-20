@@ -65,6 +65,10 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(MainActivity.this, CreateTestActivity.class));
     }
 
+    public void viewQuestion(View v){
+        startActivity(new Intent(MainActivity.this, ViewQuestionActivity.class));
+    }
+
     // method to change Language
     public void setLocale(String lang) {
         myLocale = new Locale(lang);

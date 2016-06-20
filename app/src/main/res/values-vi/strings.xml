@@ -12,6 +12,7 @@
     <string name="select_category">Chọn loại</string>
     <string name="number_of_ques">Số câu hỏi</string>
     <string name="add_question">Thêm câu hỏi</string>
+    <string name="view_question">Xem câu hỏi</string>
     <string name="create_test">Tạo bài Test</string>
     <string name="main_screen">Màn hình chính</string>
 
@@ -35,6 +36,10 @@
     <string name="msg_max_of_ques_is">Số câu tối đa sẵn có là </string>
     <string name="msg_edit_to_continue">Hãy sửa lại để tiếp tục !</string>
 
-    <string name="msg_finish_test">Bạn đã hoàn thành bài kiểm tra</string>
+    <string name="msg_reach_last_page">Bạn đang ở trang cuối cùng</string>
     <string name="msg_playing_audio">Đang chạy audio...</string>
+    <string name="msg_list_of_question">Danh sách câu hỏi</string>
+    <string name="msg_back">Trở về</string>
+    <string name="msg_done">XONG</string>
+    <string name="msg_have_not_answer_all">"Bạn chưa trả lời hết câu hỏi.\nHãy trở lại câu "</string>
 </resources>
