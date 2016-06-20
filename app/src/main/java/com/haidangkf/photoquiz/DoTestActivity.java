@@ -49,7 +49,7 @@ public class DoTestActivity extends AppCompatActivity {
 
         myTestQuestions = randomMyTestQuestions(matchQuestions, numberOfQuestion);
         for (int i = 0; i < numberOfQuestion; i++) {
-            answerMap.put(i, -1);
+            answerMap.put(i, -1); // mặc định -1 tức là chưa trả lời, đúng là 1, sai là 0
         }
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);

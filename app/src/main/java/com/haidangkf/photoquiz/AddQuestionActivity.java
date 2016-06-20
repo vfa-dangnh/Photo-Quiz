@@ -146,7 +146,7 @@ public class AddQuestionActivity extends AppCompatActivity {
                 String comment = etComment.getText().toString();
 
                 if (category.isEmpty() || comment.isEmpty()) {
-                    Toast.makeText(AddQuestionActivity.this, getString(R.string.msg_category_comment_not_empty), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddQuestionActivity.this, getString(R.string.msg_category_question_not_empty), Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -168,7 +168,6 @@ public class AddQuestionActivity extends AppCompatActivity {
                     Bitmap transparentBitmap = BitmapFactory.decodeResource(AddQuestionActivity.this.getResources(),
                             R.drawable.transparent_background);
                     btnPhotoTaking.setImageBitmap(transparentBitmap);
-//                    etCategory.setText("");
                     etComment.setText("");
                     photoPath = "";
                     audioPath = "";
@@ -181,6 +180,16 @@ public class AddQuestionActivity extends AppCompatActivity {
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                File file = new File(audioPath);
+                if (file.exists()) {
+                    file.delete();
+                }
+
+                file = new File(photoPath);
+                if (file.exists()) {
+                    file.delete();
+                }
+
                 finish();
             }
         });

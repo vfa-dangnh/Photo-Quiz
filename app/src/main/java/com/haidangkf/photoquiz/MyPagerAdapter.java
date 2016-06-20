@@ -85,7 +85,7 @@ public class MyPagerAdapter extends PagerAdapter {
             @Override
             public void onClick(View v) {
                 Log.i(TAG, "Position = " + position + " , Clicked Right");
-                answerMap.put(position, 1);
+                answerMap.put(position, 1); // set 1 for right answer
             }
         });
 
@@ -93,7 +93,7 @@ public class MyPagerAdapter extends PagerAdapter {
             @Override
             public void onClick(View v) {
                 Log.i(TAG, "Position = " + position + " , Clicked Wrong");
-                answerMap.put(position, 0);
+                answerMap.put(position, 0); // set 0 for wrong answer
             }
         });
 
@@ -140,7 +140,7 @@ public class MyPagerAdapter extends PagerAdapter {
                 @Override
                 public void onClick(View v) {
                     for (int i = 0; i < answerMap.size(); i++) {
-                        if (answerMap.get(i) == -1) {
+                        if (answerMap.get(i) == -1) { // -1 là chưa trả lời
                             Toast.makeText(activity, activity.getString(R.string.msg_have_not_answer_all) + (i+1), Toast.LENGTH_SHORT).show();
                             return;
                         }

@@ -3,7 +3,7 @@
 
     <string name="lang">Vietnamese</string>
     <string name="category">Loại</string>
-    <string name="comment">Ghi chú</string>
+    <string name="question_name">Tên câu hỏi</string>
     <string name="record">Ghi âm</string>
     <string name="delete">Xoá</string>
     <string name="add">Thêm</string>
@@ -21,7 +21,7 @@
     <string name="msg_type_new_category">Nhập loại mới</string>
     <string name="msg_record_deleted">Tệp vừa ghi đã bị xoá</string>
     <string name="msg_file_not_exists">Tệp không tồn tại</string>
-    <string name="msg_category_comment_not_empty">Loại và ghi chú không được để trống</string>
+    <string name="msg_category_question_not_empty">Loại và tên câu hỏi không được để trống</string>
     <string name="msg_take_photo">Chạm biểu tượng camera để chụp hình</string>
     <string name="msg_record_voice">Hãy ghi âm giọng nói</string>
     <string name="msg_ques_add_success">Câu hỏi đã thêm thành công</string>

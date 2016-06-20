@@ -3,7 +3,7 @@
 
     <string name="lang">English</string>
     <string name="category">Category</string>
-    <string name="comment">Comment</string>
+    <string name="question_name">Question Name</string>
     <string name="record">Record</string>
     <string name="delete">Delete</string>
     <string name="add">Add</string>
@@ -21,7 +21,7 @@
     <string name="msg_type_new_category">Type new category</string>
     <string name="msg_record_deleted">The record file has been deleted</string>
     <string name="msg_file_not_exists">File does not exists</string>
-    <string name="msg_category_comment_not_empty">Category and Comment cannot empty</string>
+    <string name="msg_category_question_not_empty">Category and Question Name cannot empty</string>
     <string name="msg_take_photo">Touch camera icon to take a photo</string>
     <string name="msg_record_voice">Please record your voice</string>
     <string name="msg_ques_add_success">Question added successful</string>
@@ -41,6 +41,6 @@
     <string name="msg_list_of_question">List of Question</string>
     <string name="msg_back">Back</string>
     <string name="msg_done">DONE</string>
-    <string name="msg_have_not_answer_all">You have not answered all questions.\nPlease back to question</string>
+    <string name="msg_have_not_answer_all">"You have not answered all questions.\nPlease back to question "</string>
 
 </resources>
