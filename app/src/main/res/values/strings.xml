@@ -9,6 +9,8 @@
     <string name="add">Add</string>
     <string name="create">Create</string>
     <string name="cancel">Cancel</string>
+    <string name="back">Back</string>
+    <string name="done">DONE</string>
     <string name="select_category">Select Category</string>
     <string name="number_of_ques">Number of Question</string>
     <string name="add_question">Add Question</string>
@@ -39,8 +41,6 @@
     <string name="msg_reach_last_page">You have reached the last page</string>
     <string name="msg_playing_audio">Playing audio...</string>
     <string name="msg_list_of_question">List of Question</string>
-    <string name="msg_back">Back</string>
-    <string name="msg_done">DONE</string>
     <string name="msg_have_not_answer_all">"You have not answered all questions.\nPlease back to question "</string>
 
 </resources>

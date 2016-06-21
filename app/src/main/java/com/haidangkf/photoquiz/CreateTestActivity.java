@@ -176,7 +176,7 @@ public class CreateTestActivity extends AppCompatActivity {
 
     private void getControls() {
         tvSelectCategory = (TextView) findViewById(R.id.tvSelectCategory);
-        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         etNumOfQuestion = (EditText) findViewById(R.id.etNumOfQuestion);
         btnCreate = (Button) findViewById(R.id.btnCreate);
         btnCancel = (Button) findViewById(R.id.btnCancel);

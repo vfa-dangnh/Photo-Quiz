@@ -9,6 +9,8 @@
     <string name="add">Thêm</string>
     <string name="create">Tạo mới</string>
     <string name="cancel">Huỷ</string>
+    <string name="back">Trở về</string>
+    <string name="done">XONG</string>
     <string name="select_category">Chọn loại</string>
     <string name="number_of_ques">Số câu hỏi</string>
     <string name="add_question">Thêm câu hỏi</string>
@@ -39,7 +41,5 @@
     <string name="msg_reach_last_page">Bạn đang ở trang cuối cùng</string>
     <string name="msg_playing_audio">Đang chạy audio...</string>
     <string name="msg_list_of_question">Danh sách câu hỏi</string>
-    <string name="msg_back">Trở về</string>
-    <string name="msg_done">XONG</string>
     <string name="msg_have_not_answer_all">"Bạn chưa trả lời hết câu hỏi.\nHãy trở lại câu "</string>
 </resources>

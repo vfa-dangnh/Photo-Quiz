@@ -1,33 +1,24 @@
 package com.haidangkf.photoquiz;
 
-import android.content.Context;
-import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class ViewQuestionActivity extends AppCompatActivity {
+public class ViewQuestionActivity extends AppCompatActivity implements MultiSelectionSpinner.OnMultipleItemsSelectedListener {
 
     final String TAG = "my_log";
     private TextView tvSelectCategory;
-    private TextView tvSelectAll;
-    private CheckBox chkSelectAll;
-    private Button btnView;
-    private Button btnCancel;
-    private boolean isExpandCategory = true;
-    private int chkCount;
+    private Button btnBack;
 
     private ArrayList<Category> categoryList = new ArrayList<>();
     private RecyclerView recyclerView;
@@ -38,11 +29,19 @@ public class ViewQuestionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_question);
 
-        getControls();
+        findViewById();
         addCategoryData();
         // set font for TextView tvSelectCategory
         Typeface face = Typeface.createFromAsset(getAssets(), "fonts/victoria.ttf");
         tvSelectCategory.setTypeface(face);
+
+
+        String[] array = {"one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"};
+        MultiSelectionSpinner multiSelectionSpinner = (MultiSelectionSpinner) findViewById(R.id.multiSpinner);
+        multiSelectionSpinner.setItems(array);
+//        multiSelectionSpinner.setSelection(new int[]{2, 6});
+        multiSelectionSpinner.setListener(this);
+
 
         mAdapter = new CategoryAdapter(categoryList);
         final RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
@@ -54,103 +53,23 @@ public class ViewQuestionActivity extends AppCompatActivity {
         recyclerView.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
 
-        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView, new CreateTestActivity.ClickListener() {
-            @Override
-            public void onClick(View view, int position) {
-//                View childView = mLayoutManager.findViewByPosition(position);
-//                tvCategory = (TextView) childView.findViewById(R.id.tvCategory);
-//                Toast.makeText(CreateTestActivity.this, "position " + position + " - " + tvCategory.getText().toString(), Toast.LENGTH_SHORT).show();
-            }
 
-            @Override
-            public void onLongClick(View view, int position) {
-//                Category category = categoryList.get(position);
-//                Toast.makeText(getApplicationContext(), "Long click on " + category.getCategory(), Toast.LENGTH_SHORT).show();
-            }
-        }));
-
-        tvSelectCategory.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!isExpandCategory) {
-                    recyclerView.setVisibility(View.VISIBLE);
-                    isExpandCategory = true;
-                } else {
-                    recyclerView.setVisibility(View.INVISIBLE);
-                    isExpandCategory = false;
-                }
-            }
-        });
-
-        tvSelectAll.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (chkSelectAll.isChecked()) {
-                    chkSelectAll.setChecked(false);
-                    recyclerView.setVisibility(View.VISIBLE);
-                } else {
-                    chkSelectAll.setChecked(true);
-                    recyclerView.setVisibility(View.INVISIBLE);
-                }
-            }
-        });
-
-        chkSelectAll.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (chkSelectAll.isChecked()) {
-                    recyclerView.setVisibility(View.INVISIBLE);
-                } else {
-                    recyclerView.setVisibility(View.VISIBLE);
-                }
-            }
-        });
-
-        btnView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (chkSelectAll.isChecked()) {
-                    ArrayList<String> selectedItems = new ArrayList<String>();
-                    for (int x = 0; x < categoryList.size(); x++) {
-                        selectedItems.add(categoryList.get(x).getCategory());
-                    }
-
-                    Intent i = new Intent();
-                    i.putStringArrayListExtra("categoryList", selectedItems);
-                    i.setClass(ViewQuestionActivity.this, QuestionListActivity.class);
-                    startActivity(i);
-                } else {
-
-                    chkCount = 0;
-                    ArrayList<String> selectedItems = new ArrayList<String>();
-                    for (int x = 0; x < categoryList.size(); x++) {
-                        if (categoryList.get(x).isSelected()) {
-                            chkCount++;
-                            selectedItems.add(categoryList.get(x).getCategory());
-                        }
-                    }
-
-                    if (chkCount < 1) {
-                        Toast.makeText(ViewQuestionActivity.this, getString(R.string.msg_select_at_least), Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-
-                    Intent i = new Intent();
-                    i.putStringArrayListExtra("categoryList", selectedItems);
-                    i.setClass(ViewQuestionActivity.this, QuestionListActivity.class);
-                    startActivity(i);
-                }
-
-                finish();
-            }
-        });
-
-        btnCancel.setOnClickListener(new View.OnClickListener() {
+        btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
+    }
+
+    @Override
+    public void selectedIndices(List<Integer> indices) {
+
+    }
+
+    @Override
+    public void selectedStrings(List<String> strings) {
+        Toast.makeText(this, strings.toString(), Toast.LENGTH_SHORT).show();
     }
 
     private void addCategoryData() {
@@ -171,68 +90,10 @@ public class ViewQuestionActivity extends AppCompatActivity {
         }
     }
 
-    private void getControls() {
+    private void findViewById() {
         tvSelectCategory = (TextView) findViewById(R.id.tvSelectCategory);
-        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        tvSelectAll = (TextView) findViewById(R.id.tvSelectAll);
-        chkSelectAll = (CheckBox) findViewById(R.id.chkSelectAll);
-        btnView = (Button) findViewById(R.id.btnView);
-        btnCancel = (Button) findViewById(R.id.btnCancel);
-    }
-
-    //--------------------------------------------------------------------------------
-
-    // RecyclerView doesn’t have OnItemClickListener method to identify item click
-    // Need to write your own class extending RecyclerView.OnItemTouchListener
-    // The below code is using for RecyclerView Item Click Listener
-
-    public interface ClickListener {
-        void onClick(View view, int position);
-
-        void onLongClick(View view, int position);
-    }
-
-    public static class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
-
-        private GestureDetector gestureDetector;
-        private CreateTestActivity.ClickListener clickListener;
-
-        public RecyclerTouchListener(Context context, final RecyclerView recyclerView, final CreateTestActivity.ClickListener clickListener) {
-            this.clickListener = clickListener;
-            gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
-                @Override
-                public boolean onSingleTapUp(MotionEvent e) {
-                    return true;
-                }
-
-                @Override
-                public void onLongPress(MotionEvent e) {
-                    View child = recyclerView.findChildViewUnder(e.getX(), e.getY());
-                    if (child != null && clickListener != null) {
-                        clickListener.onLongClick(child, recyclerView.getChildPosition(child));
-                    }
-                }
-            });
-        }
-
-        @Override
-        public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
-
-            View child = rv.findChildViewUnder(e.getX(), e.getY());
-            if (child != null && clickListener != null && gestureDetector.onTouchEvent(e)) {
-                clickListener.onClick(child, rv.getChildPosition(child));
-            }
-            return false;
-        }
-
-        @Override
-        public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-        }
-
-        @Override
-        public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-
-        }
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        btnBack = (Button) findViewById(R.id.btnBack);
     }
 
 }
