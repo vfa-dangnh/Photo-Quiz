@@ -99,6 +99,12 @@ public class AddQuestionActivity extends AppCompatActivity {
         btnPhotoTaking.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Nếu đã tồn tại file ảnh rồi thì xoá nó
+                File file = new File(photoPath);
+                if (file.exists()) {
+                    file.delete();
+                }
+                photoPath = "";
                 startActivity(new Intent(AddQuestionActivity.this, TakePhotoActivity.class));
             }
         });
@@ -108,6 +114,12 @@ public class AddQuestionActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 if (!isRecording) {
+                    // Nếu đã tồn tại file ghi âm rồi thì xoá nó
+                    File file = new File(audioPath);
+                    if (file.exists()) {
+                        file.delete();
+                    }
+
                     String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
                     String audioFileName = "audio_" + timeStamp + ".3gp";
                     audioPath = dirPath + "/" + audioFileName;
@@ -115,13 +127,13 @@ public class AddQuestionActivity extends AppCompatActivity {
 
                     isRecording = true;
                     btnRecord.setBackgroundResource(R.drawable.custom_btn_sandrift);
-                    btnRecord.setText("Stop");
+                    btnRecord.setText(getString(R.string.stop));
                     recordAudio(); // call this method to record
                 } else {
                     stopRecordAudio();
                     isRecording = false;
                     btnRecord.setBackgroundResource(R.drawable.custom_btn_3);
-                    btnRecord.setText("Record");
+                    btnRecord.setText(getString(R.string.record));
                 }
             }
         });

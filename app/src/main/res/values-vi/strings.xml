@@ -5,6 +5,7 @@
     <string name="category">Loại</string>
     <string name="question_name">Tên câu hỏi</string>
     <string name="record">Ghi âm</string>
+    <string name="stop">Dừng</string>
     <string name="delete">Xoá</string>
     <string name="add">Thêm</string>
     <string name="create">Tạo mới</string>

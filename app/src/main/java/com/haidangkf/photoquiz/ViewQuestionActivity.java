@@ -3,10 +3,11 @@ package com.haidangkf.photoquiz;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,6 +22,9 @@ public class ViewQuestionActivity extends AppCompatActivity implements MultiSele
     private Button btnBack;
 
     private ArrayList<Category> categoryList = new ArrayList<>();
+    private ArrayList<Category> categoryList2 = new ArrayList<>();
+    private List<String> categoryListString = new ArrayList<>();
+    private ArrayList<String> questionNameList = new ArrayList<>();
     private RecyclerView recyclerView;
     private CategoryAdapter mAdapter;
 
@@ -31,6 +35,7 @@ public class ViewQuestionActivity extends AppCompatActivity implements MultiSele
 
         findViewById();
         addCategoryData();
+        addCategoryDataString();
         // set font for TextView tvSelectCategory
         Typeface face = Typeface.createFromAsset(getAssets(), "fonts/victoria.ttf");
         tvSelectCategory.setTypeface(face);
@@ -38,20 +43,48 @@ public class ViewQuestionActivity extends AppCompatActivity implements MultiSele
 
         String[] array = {"one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"};
         MultiSelectionSpinner multiSelectionSpinner = (MultiSelectionSpinner) findViewById(R.id.multiSpinner);
-        multiSelectionSpinner.setItems(array);
-//        multiSelectionSpinner.setSelection(new int[]{2, 6});
+        multiSelectionSpinner.setItems(categoryListString);
+//        multiSelectionSpinner.setSelection(new int[]{2, 3});
         multiSelectionSpinner.setListener(this);
 
 
-        mAdapter = new CategoryAdapter(categoryList);
-        final RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-        recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        // display the divider between rows
-        recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
-        // set the adapter
-        recyclerView.setAdapter(mAdapter);
-        mAdapter.notifyDataSetChanged();
+//        mAdapter = new CategoryAdapter(categoryList2);
+//        final RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+//        recyclerView.setLayoutManager(mLayoutManager);
+//        recyclerView.setItemAnimator(new DefaultItemAnimator());
+//        // display the divider between rows
+//        recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+//        // set the adapter
+//        recyclerView.setAdapter(mAdapter);
+//        mAdapter.notifyDataSetChanged();
+
+
+        questionNameList = getQuestionNameList(categoryListString);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(new RecyclerView.Adapter<QuestionNameViewHolder>() {
+
+            @Override
+            public QuestionNameViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                View v = LayoutInflater.from(parent.getContext()).inflate(
+                        android.R.layout.simple_list_item_1,
+                        parent,
+                        false);
+                QuestionNameViewHolder vh = new QuestionNameViewHolder(v);
+                return vh;
+            }
+
+            @Override
+            public void onBindViewHolder(QuestionNameViewHolder vh, int position) {
+                TextView tv = (TextView) vh.itemView;
+                tv.setText(questionNameList.get(position));
+                tv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_stars_black, 0, 0, 0);
+            }
+
+            @Override
+            public int getItemCount() {
+                return questionNameList.size();
+            }
+        });
 
 
         btnBack.setOnClickListener(new View.OnClickListener() {
@@ -90,10 +123,50 @@ public class ViewQuestionActivity extends AppCompatActivity implements MultiSele
         }
     }
 
+    private void addCategoryDataString() {
+        for (Category c : categoryList) {
+            categoryListString.add(c.getCategory());
+        }
+    }
+
+    private ArrayList<String> getQuestionNameList(List<String> categoryListString) {
+        ArrayList<String> nameList = new ArrayList<>();
+        ArrayList<Question> allQuestions = MyApplication.db.getQuestionList();
+        ArrayList<Question> matchQuestions = new ArrayList<>();
+
+        for (String category : categoryListString) {
+            for (Question question : allQuestions) {
+                if (question.getCategory().equalsIgnoreCase(category)) {
+                    matchQuestions.add(question);
+                }
+            }
+        }
+
+        for (Question question : matchQuestions) {
+            nameList.add(question.getComment());
+        }
+
+        return nameList;
+    }
+
     private void findViewById() {
         tvSelectCategory = (TextView) findViewById(R.id.tvSelectCategory);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         btnBack = (Button) findViewById(R.id.btnBack);
+    }
+
+    //--------------------------------------------------------------------------
+
+    private class QuestionNameViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        public QuestionNameViewHolder(View v) {
+            super(v);
+            v.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            Toast.makeText(getApplicationContext(), "You have clicked " + ((TextView) v).getText(), Toast.LENGTH_LONG).show();
+        }
     }
 
 }
