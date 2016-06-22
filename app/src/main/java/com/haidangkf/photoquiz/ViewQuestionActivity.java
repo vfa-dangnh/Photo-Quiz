@@ -22,11 +22,10 @@ public class ViewQuestionActivity extends AppCompatActivity implements MultiSele
     private Button btnBack;
 
     private ArrayList<Category> categoryList = new ArrayList<>();
-    private ArrayList<Category> categoryList2 = new ArrayList<>();
     private List<String> categoryListString = new ArrayList<>();
-    private ArrayList<String> questionNameList = new ArrayList<>();
+    private List<String> questionNameList = new ArrayList<>();
     private RecyclerView recyclerView;
-    private CategoryAdapter mAdapter;
+    private RecyclerView.Adapter<QuestionNameViewHolder> mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,29 +39,15 @@ public class ViewQuestionActivity extends AppCompatActivity implements MultiSele
         Typeface face = Typeface.createFromAsset(getAssets(), "fonts/victoria.ttf");
         tvSelectCategory.setTypeface(face);
 
-
-        String[] array = {"one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"};
         MultiSelectionSpinner multiSelectionSpinner = (MultiSelectionSpinner) findViewById(R.id.multiSpinner);
         multiSelectionSpinner.setItems(categoryListString);
-//        multiSelectionSpinner.setSelection(new int[]{2, 3});
+//        multiSelectionSpinner.setSelection(new int[]{0});
+        multiSelectionSpinner.setSelection(categoryListString);
         multiSelectionSpinner.setListener(this);
-
-
-//        mAdapter = new CategoryAdapter(categoryList2);
-//        final RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-//        recyclerView.setLayoutManager(mLayoutManager);
-//        recyclerView.setItemAnimator(new DefaultItemAnimator());
-//        // display the divider between rows
-//        recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
-//        // set the adapter
-//        recyclerView.setAdapter(mAdapter);
-//        mAdapter.notifyDataSetChanged();
-
 
         questionNameList = getQuestionNameList(categoryListString);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new RecyclerView.Adapter<QuestionNameViewHolder>() {
-
+        mAdapter = new RecyclerView.Adapter<QuestionNameViewHolder>() {
             @Override
             public QuestionNameViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
                 View v = LayoutInflater.from(parent.getContext()).inflate(
@@ -84,8 +69,8 @@ public class ViewQuestionActivity extends AppCompatActivity implements MultiSele
             public int getItemCount() {
                 return questionNameList.size();
             }
-        });
-
+        };
+        recyclerView.setAdapter(mAdapter);
 
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,6 +88,13 @@ public class ViewQuestionActivity extends AppCompatActivity implements MultiSele
     @Override
     public void selectedStrings(List<String> strings) {
         Toast.makeText(this, strings.toString(), Toast.LENGTH_SHORT).show();
+
+        categoryListString.clear();
+        for (String s : strings){
+            categoryListString.add(s);
+        }
+        questionNameList = getQuestionNameList(categoryListString);
+        mAdapter.notifyDataSetChanged(); // update the list
     }
 
     private void addCategoryData() {
@@ -129,8 +121,8 @@ public class ViewQuestionActivity extends AppCompatActivity implements MultiSele
         }
     }
 
-    private ArrayList<String> getQuestionNameList(List<String> categoryListString) {
-        ArrayList<String> nameList = new ArrayList<>();
+    private List<String> getQuestionNameList(List<String> categoryListString) {
+        List<String> nameList = new ArrayList<>();
         ArrayList<Question> allQuestions = MyApplication.db.getQuestionList();
         ArrayList<Question> matchQuestions = new ArrayList<>();
 
@@ -156,7 +148,7 @@ public class ViewQuestionActivity extends AppCompatActivity implements MultiSele
     }
 
     //--------------------------------------------------------------------------
-
+    // inner class ViewHolder
     private class QuestionNameViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public QuestionNameViewHolder(View v) {
             super(v);
@@ -165,7 +157,7 @@ public class ViewQuestionActivity extends AppCompatActivity implements MultiSele
 
         @Override
         public void onClick(View v) {
-            Toast.makeText(getApplicationContext(), "You have clicked " + ((TextView) v).getText(), Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "You clicked " + ((TextView) v).getText(), Toast.LENGTH_LONG).show();
         }
     }
 
