@@ -13,6 +13,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,6 +24,9 @@ public class CreateTestActivity extends AppCompatActivity {
 
     final String TAG = "my_log";
     private TextView tvSelectCategory;
+    private TextView tvSelectAll;
+    public static CheckBox chkSelectAll;
+    public static boolean isSelectAll = false;
     private EditText etNumOfQuestion;
     private Button btnCreate;
     private Button btnCancel;
@@ -41,13 +45,14 @@ public class CreateTestActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_test);
 
-        getControls();
-        addCategoryData();
+        findViewById();
+        categoryList = getCategoryDataFromDB();
+
         // set font for TextView tvSelectCategory
-        Typeface face = Typeface.createFromAsset(getAssets(), "fonts/victoria.ttf");
+        final Typeface face = Typeface.createFromAsset(getAssets(), "fonts/victoria.ttf");
         tvSelectCategory.setTypeface(face);
 
-        mAdapter = new CategoryAdapter(categoryList);
+        mAdapter = new CategoryAdapter(this, categoryList);
         final RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -60,6 +65,16 @@ public class CreateTestActivity extends AppCompatActivity {
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getApplicationContext(), recyclerView, new ClickListener() {
             @Override
             public void onClick(View view, int position) {
+                if (categoryList.get(position).isSelected()) {
+                    categoryList.get(position).setSelected(false);
+                    mAdapter.notifyDataSetChanged();
+                } else {
+                    categoryList.get(position).setSelected(true);
+                    mAdapter.notifyDataSetChanged();
+                }
+
+                setCheckForSelectAllBox();
+
 //                View childView = mLayoutManager.findViewByPosition(position);
 //                tvCategory = (TextView) childView.findViewById(R.id.tvCategory);
 //                Toast.makeText(CreateTestActivity.this, "position " + position + " - " + tvCategory.getText().toString(), Toast.LENGTH_SHORT).show();
@@ -81,6 +96,34 @@ public class CreateTestActivity extends AppCompatActivity {
                 } else {
                     recyclerView.setVisibility(View.INVISIBLE);
                     isExpandCategory = false;
+                }
+            }
+        });
+
+        tvSelectAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (chkSelectAll.isChecked()) {
+                    chkSelectAll.setChecked(false);
+                    isSelectAll = false;
+                    actionSelectAll(isSelectAll);
+                } else {
+                    chkSelectAll.setChecked(true);
+                    isSelectAll = true;
+                    actionSelectAll(isSelectAll);
+                }
+            }
+        });
+
+        chkSelectAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (chkSelectAll.isChecked()) {
+                    isSelectAll = true;
+                    actionSelectAll(isSelectAll);
+                } else {
+                    isSelectAll = false;
+                    actionSelectAll(isSelectAll);
                 }
             }
         });
@@ -156,8 +199,31 @@ public class CreateTestActivity extends AppCompatActivity {
 
     }
 
-    private void addCategoryData() {
+    private void actionSelectAll(boolean isSelectAll) {
+        for (Category category : categoryList) {
+            category.setSelected(isSelectAll);
+        }
+        mAdapter.notifyDataSetChanged();
+    }
+
+    public void setCheckForSelectAllBox() {
+        int count = 0;
+        for (Category category : categoryList) {
+            if (category.isSelected()) count++;
+        }
+
+        if (count == recyclerView.getAdapter().getItemCount()) {
+            CreateTestActivity.chkSelectAll.setChecked(true);
+            CreateTestActivity.isSelectAll = true;
+        } else {
+            CreateTestActivity.chkSelectAll.setChecked(false);
+            CreateTestActivity.isSelectAll = false;
+        }
+    }
+
+    private ArrayList<Category> getCategoryDataFromDB() {
         ArrayList<Question> list = MyApplication.db.getQuestionList();
+        ArrayList<Category> categoryList = new ArrayList<>();
 
         for (Question question : list) {
             Category category = new Category(question.getCategory());
@@ -172,10 +238,14 @@ public class CreateTestActivity extends AppCompatActivity {
                 categoryList.add(category);
             }
         }
+
+        return categoryList;
     }
 
-    private void getControls() {
+    private void findViewById() {
         tvSelectCategory = (TextView) findViewById(R.id.tvSelectCategory);
+        tvSelectAll = (TextView) findViewById(R.id.tvSelectAll);
+        chkSelectAll = (CheckBox) findViewById(R.id.chkSelectAll);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         etNumOfQuestion = (EditText) findViewById(R.id.etNumOfQuestion);
         btnCreate = (Button) findViewById(R.id.btnCreate);

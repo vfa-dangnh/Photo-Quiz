@@ -12,12 +12,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
+import github.chenupt.springindicator.SpringIndicator;
+
 public class DoTestActivity extends AppCompatActivity {
 
     final String TAG = "my_log";
     ViewPager viewPager;
     MyPagerAdapter myPagerAdapter;
     CirclePageIndicator mIndicator;
+    SpringIndicator springIndicator;
 
     // -----------------------------------------------
     ArrayList<String> selectedItems = new ArrayList<>();
@@ -53,18 +56,23 @@ public class DoTestActivity extends AppCompatActivity {
         }
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
+
         myPagerAdapter = new MyPagerAdapter(this, myTestQuestions, answerMap);
         viewPager.setAdapter(myPagerAdapter);
         viewPager.setCurrentItem(0); // set the item to view first
         viewPager.setOnPageChangeListener(pageChangeListener);
 
-        // ViewPager Indicator
+        // ViewPager JakeWharton Indicator
 //        mIndicator = (CirclePageIndicator) findViewById(R.id.indicator);
 //        mIndicator.setStrokeColor(Color.RED); // màu viền cho ký hiệu
 //        mIndicator.setFillColor(Color.BLUE); // màu nền cho ký hiệu đang chọn
 //        mIndicator.setPageColor(Color.GREEN); // màu nền cho ký hiệu không được chọn
 //        mIndicator.setBackgroundColor(Color.YELLOW); // màu nền Indicator Bar
 //        mIndicator.setViewPager(viewPager);
+
+        // ViewPager SpringIndicator
+        springIndicator = (SpringIndicator) findViewById(R.id.indicator);
+        springIndicator.setViewPager(viewPager);
 
     }
 

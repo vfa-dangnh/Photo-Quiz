@@ -4,6 +4,11 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
+    <color name="indicator_1">#55B3C2</color>
+    <color name="indicator_2">#64A4A4</color>
+    <color name="indicator_3">#66D7B9</color>
+    <color name="indicator_4">#FDBC7D</color>
+
     <color name="black">#000000</color>     <!-- [0] -->
     <color name="white">#FFFFFF</color>     <!-- [1] -->
     <color name="red">#FF0000</color>       <!-- [2] -->

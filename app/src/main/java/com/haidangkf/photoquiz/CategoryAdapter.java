@@ -1,5 +1,6 @@
 package com.haidangkf.photoquiz;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,21 +13,11 @@ import java.util.ArrayList;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyViewHolder> {
 
+    private Context context;
     private ArrayList<Category> categoryList;
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView tvCategory;
-        public CheckBox chkCategory;
-
-        public MyViewHolder(View view) {
-            super(view);
-            tvCategory = (TextView) view.findViewById(R.id.tvCategory);
-            chkCategory = (CheckBox) view.findViewById(R.id.chkCategory);
-        }
-    }
-
-
-    public CategoryAdapter(ArrayList<Category> categoryList) {
+    public CategoryAdapter(Context context, ArrayList<Category> categoryList) {
+        this.context = context;
         this.categoryList = categoryList;
     }
 
@@ -56,11 +47,25 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.MyView
                 category.setSelected(isChecked);
             }
         });
-
     }
 
     @Override
     public int getItemCount() {
         return categoryList.size();
     }
+
+
+    // ---------------------------------------------------------
+    // inner class ViewHolder
+    public class MyViewHolder extends RecyclerView.ViewHolder {
+        public TextView tvCategory;
+        public CheckBox chkCategory;
+
+        public MyViewHolder(View view) {
+            super(view);
+            tvCategory = (TextView) view.findViewById(R.id.tvCategory);
+            chkCategory = (CheckBox) view.findViewById(R.id.chkCategory);
+        }
+    }
+
 }

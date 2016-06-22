@@ -1,6 +1,9 @@
 package com.haidangkf.photoquiz;
 
-public class Question {
+import java.io.Serializable;
+
+@SuppressWarnings("serial") // With this annotation we are going to hide compiler warnings
+public class Question implements Serializable {
 
     private int id;
     private String category;

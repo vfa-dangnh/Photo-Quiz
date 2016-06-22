@@ -18,6 +18,8 @@
     <string name="view_question">Xem câu hỏi</string>
     <string name="create_test">Tạo bài Test</string>
     <string name="main_screen">Màn hình chính</string>
+    <string name="select_all">Chọn tất cả</string>
+    <string name="details">Chi tiết</string>
 
     <string name="msg_enter_category">Hãy nhập loại vào</string>
     <string name="msg_category_is">Loại : </string>
@@ -43,4 +45,7 @@
     <string name="msg_playing_audio">Đang chạy audio...</string>
     <string name="msg_list_of_question">Danh sách câu hỏi</string>
     <string name="msg_have_not_answer_all">"Bạn chưa trả lời hết câu hỏi.\nHãy trở lại câu "</string>
+    <string name="msg_no_question_found">"Không tồn tại câu hỏi nào !"</string>
+    <string name="msg_go_details">"Xem chi tiết về "</string>
+
 </resources>
