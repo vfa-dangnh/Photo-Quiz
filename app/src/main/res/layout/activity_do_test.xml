@@ -6,11 +6,13 @@
     android:orientation="vertical"
     tools:context=".DoTestActivity">
 
+    <!--JakeWharton Indicator-->
     <!--<com.viewpagerindicator.CirclePageIndicator
         android:id="@+id/indicator"
         android:layout_width="match_parent"
         android:layout_height="15dp" />-->
 
+    <!--Spring Indicator-->
     <github.chenupt.springindicator.SpringIndicator
         xmlns:app="http://schemas.android.com/apk/res-auto"
         app:siTextSize="18sp"

@@ -2,7 +2,6 @@ package com.haidangkf.photoquiz;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
@@ -22,7 +21,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class MyPagerAdapter extends PagerAdapter {
 
@@ -33,7 +31,6 @@ public class MyPagerAdapter extends PagerAdapter {
     // -------------------------
 
     private String photoPath = "";
-    HashMap<Integer, Integer> answerMap;
 
     FrameLayout frameDone;
     ImageView imgPhoto;
@@ -42,11 +39,9 @@ public class MyPagerAdapter extends PagerAdapter {
     // -------------------------
 
     // constructor
-    public MyPagerAdapter(Activity activity, ArrayList<Question> myTestQuestions,
-                          HashMap<Integer, Integer> answerMap) {
+    public MyPagerAdapter(Activity activity, ArrayList<Question> myTestQuestions) {
         this.activity = activity;
         this.myTestQuestions = myTestQuestions;
-        this.answerMap = answerMap;
         Log.i(TAG, "enter Constructor");
     }
 
@@ -85,7 +80,7 @@ public class MyPagerAdapter extends PagerAdapter {
             @Override
             public void onClick(View v) {
                 Log.i(TAG, "Position = " + position + " , Clicked Right");
-                answerMap.put(position, 1); // set 1 for right answer
+                DoTestActivity.answerMap.put(position, 1); // set 1 for right answer
             }
         });
 
@@ -93,7 +88,7 @@ public class MyPagerAdapter extends PagerAdapter {
             @Override
             public void onClick(View v) {
                 Log.i(TAG, "Position = " + position + " , Clicked Wrong");
-                answerMap.put(position, 0); // set 0 for wrong answer
+                DoTestActivity.answerMap.put(position, 0); // set 0 for wrong answer
             }
         });
 
@@ -105,7 +100,7 @@ public class MyPagerAdapter extends PagerAdapter {
 
     @Override
     public int getCount() { // number of pages can view
-        return myTestQuestions.size() + 1;
+        return myTestQuestions.size();
     }
 
     @Override
@@ -119,6 +114,12 @@ public class MyPagerAdapter extends PagerAdapter {
         container.removeView((View) object);
     }
 
+    // this will set up the title in ViewPager Indicator
+    @Override
+    public CharSequence getPageTitle(int position) {
+        return "" + (position+1);
+    }
+
     public void findViewById(View view) {
         frameDone = (FrameLayout) view.findViewById(R.id.frameDone);
         btnDone = (Button) view.findViewById(R.id.btnDone);
@@ -129,33 +130,6 @@ public class MyPagerAdapter extends PagerAdapter {
     }
 
     public void loadQuestion(int position) {
-        if (position == getCount() - 1) { // đang ở trang cuối cùng (đã làm xong bài test)
-            imgPhoto.setVisibility(View.GONE);
-            btnPlay.setVisibility(View.GONE);
-            btnRight.setVisibility(View.GONE);
-            btnWrong.setVisibility(View.GONE);
-
-            frameDone.setVisibility(View.VISIBLE);
-            btnDone.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    for (int i = 0; i < answerMap.size(); i++) {
-                        if (answerMap.get(i) == -1) { // -1 là chưa trả lời
-                            Toast.makeText(activity, activity.getString(R.string.msg_have_not_answer_all) + (i+1), Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                    }
-
-                    Intent i = new Intent(activity, ResultActivity.class);
-                    i.putExtra("numberOfQuestion", myTestQuestions.size());
-                    i.putExtra("answerMap", answerMap);
-                    activity.startActivity(i);
-                    activity.finish();
-                }
-            });
-            return;
-        }
-
         Question question = myTestQuestions.get(position);
         photoPath = question.getPhotoPath();
         loadPhotoToView(photoPath);

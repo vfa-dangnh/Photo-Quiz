@@ -1,7 +1,10 @@
 package com.haidangkf.photoquiz;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
@@ -28,7 +31,7 @@ public class DoTestActivity extends AppCompatActivity {
     ArrayList<Question> matchQuestions = new ArrayList<>();
     ArrayList<Question> myTestQuestions;
     int numberOfQuestion;
-    HashMap<Integer, Integer> answerMap = new HashMap<>();
+    public static HashMap<Integer, Integer> answerMap = new HashMap<>();
     // -----------------------------------------------
 
     @Override
@@ -57,10 +60,10 @@ public class DoTestActivity extends AppCompatActivity {
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
 
-        myPagerAdapter = new MyPagerAdapter(this, myTestQuestions, answerMap);
+        myPagerAdapter = new MyPagerAdapter(this, myTestQuestions);
         viewPager.setAdapter(myPagerAdapter);
         viewPager.setCurrentItem(0); // set the item to view first
-        viewPager.setOnPageChangeListener(pageChangeListener);
+        viewPager.addOnPageChangeListener(pageChangeListener);
 
         // ViewPager JakeWharton Indicator
 //        mIndicator = (CirclePageIndicator) findViewById(R.id.indicator);
@@ -83,12 +86,8 @@ public class DoTestActivity extends AppCompatActivity {
             Random rand = new Random();
             int n = rand.nextInt(questionList.size());
             returnQuestions.add(questionList.get(n));
+            Log.i(TAG, "Question " + (i + 1) + ": " + questionList.get(n).toString());
             questionList.remove(n); // delete this question in list after getting it
-        }
-
-        int x = 0;
-        for (Question question : returnQuestions) {
-            Log.i(TAG, "Question " + (++x) + ": " + question.toString());
         }
 
         return returnQuestions;
@@ -100,31 +99,114 @@ public class DoTestActivity extends AppCompatActivity {
         Log.i(TAG, "onResume DoTest");
     }
 
+
     ViewPager.OnPageChangeListener pageChangeListener = new ViewPager.OnPageChangeListener() {
+        boolean isShowDialog;
+
+        @Override
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            //This method will be invoked when the current page is scrolled,
+            //either as part of a programmatically initiated smooth scroll
+            //or a user initiated touch scroll.
+//            Log.i(TAG, "onPageScrolled " + position);
+        }
+
+        @Override
+        public void onPageSelected(int position) {
+            //This method will be invoked when a new page becomes selected.
+//            Log.i(TAG, "ON PAGE SELECTED " + position);
+
+            int lastIndex = viewPager.getAdapter().getCount() - 1;
+            if (position == lastIndex) { // when on last page
+//                Toast.makeText(DoTestActivity.this, getString(R.string.msg_reach_last_page), Toast.LENGTH_SHORT).show();
+                // can start new Activity here
+            }
+        }
 
         @Override
         public void onPageScrollStateChanged(int state) {
             //Called when the scroll state changes.
-        }
+//            Log.i(TAG, "onPageScrollStateChanged " + state);
 
-        @Override
-        public void onPageScrolled(int position,
-                                   float positionOffset, int positionOffsetPixels) {
-            //This method will be invoked when the current page is scrolled,
-            //either as part of a programmatically initiated smooth scroll
-            //or a user initiated touch scroll.
-        }
+            int lastIndex = viewPager.getAdapter().getCount() - 1;
+            int penultIndex = viewPager.getAdapter().getCount() - 2; // index áp chót
+            int currentItem = viewPager.getCurrentItem();
 
-        @Override
-        public void onPageSelected(final int position) {
-            //This method will be invoked when a new page becomes selected.
-
-            if (position == viewPager.getAdapter().getCount() - 1) {
-                Toast.makeText(DoTestActivity.this, getString(R.string.msg_reach_last_page), Toast.LENGTH_SHORT).show();
-                // can start new Activity here
+            if (currentItem == penultIndex) {
+                isShowDialog = false;
             }
 
+            if (currentItem == lastIndex && state == 0) { // handle last page change
+                if (!isShowDialog) {
+                    isShowDialog = true;
+                } else {
+                    handleExitDoTest();
+                }
+            }
         }
     };
+
+    public void handleExitDoTest() {
+        Log.i(TAG, "answerMap.size() = " + answerMap.size());
+
+        for (int i = 0; i < answerMap.size(); i++) {
+            if (answerMap.get(i) == -1) { // -1 là chưa trả lời
+                showNotFinishedDialog(i);
+                return;
+            }
+        }
+
+        showFinishedDialog();
+    }
+
+    public void showFinishedDialog() {
+        AlertDialog.Builder b = new AlertDialog.Builder(DoTestActivity.this);
+        b.setTitle(getString(R.string.msg_finish_test));
+        b.setMessage(getString(R.string.msg_have_answer_all));
+
+        b.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent i = new Intent(DoTestActivity.this, ResultActivity.class);
+                i.putExtra("numberOfQuestion", myTestQuestions.size());
+                i.putExtra("answerMap", answerMap);
+                startActivity(i);
+                finish();
+            }
+        });
+
+        b.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        b.create().show();
+    }
+
+    public void showNotFinishedDialog(final int index) {
+        AlertDialog.Builder b = new AlertDialog.Builder(DoTestActivity.this);
+        b.setTitle(getString(R.string.msg_not_finish_test));
+        b.setMessage(getString(R.string.msg_have_not_answer_all));
+
+        b.setPositiveButton("Back", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                Toast.makeText(DoTestActivity.this, getString(R.string.msg_go_back_to_question) + (index + 1), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        b.setNegativeButton("Quit", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                finish();
+            }
+        });
+
+        b.create().show();
+    }
 
 }

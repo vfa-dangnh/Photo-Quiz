@@ -44,8 +44,12 @@
     <string name="msg_reach_last_page">Bạn đang ở trang cuối cùng</string>
     <string name="msg_playing_audio">Đang chạy audio...</string>
     <string name="msg_list_of_question">Danh sách câu hỏi</string>
-    <string name="msg_have_not_answer_all">"Bạn chưa trả lời hết câu hỏi.\nHãy trở lại câu "</string>
     <string name="msg_no_question_found">"Không tồn tại câu hỏi nào !"</string>
     <string name="msg_go_details">"Xem chi tiết về "</string>
+    <string name="msg_finish_test">Đã hoàn thành bài Test</string>
+    <string name="msg_have_answer_all">"Bạn đã trả lời hết câu hỏi!\nChọn Yes để xem kết quả\nhoặc No để quay lại."</string>
+    <string name="msg_not_finish_test">Chưa hoàn thành bài Test</string>
+    <string name="msg_have_not_answer_all">"Bạn chưa trả lời hết câu hỏi!\nChọn Back để quay lại\nhoặc Quit để huỷ bài test."</string>
+    <string name="msg_go_back_to_question">"Hãy trở lại câu "</string>
 
 </resources>
