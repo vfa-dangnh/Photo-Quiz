@@ -32,6 +32,7 @@
         android:visibility="visible" />
 
     <TableRow
+        android:id="@+id/tableRowSelectAll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"

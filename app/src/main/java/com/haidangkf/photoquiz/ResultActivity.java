@@ -18,7 +18,7 @@ public class ResultActivity extends AppCompatActivity {
 
     HashMap<Integer, Integer> answerMap;
     int numberOfQuestion;
-    int correctAnswers=0;
+    int correctAnswers = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,13 +29,13 @@ public class ResultActivity extends AppCompatActivity {
         btnMainScreen = (Button) findViewById(R.id.btnMainScreen);
 
         Intent intent = getIntent();
-        numberOfQuestion = intent.getIntExtra("numberOfQuestion",0);
+        numberOfQuestion = intent.getIntExtra("numberOfQuestion", 0);
         answerMap = (HashMap<Integer, Integer>) intent.getSerializableExtra("answerMap");
-        Log.i(TAG, "numberOfQuestion = "+numberOfQuestion);
-        Log.i(TAG, "answerMap Size = "+answerMap.size());
+        Log.i(TAG, "numberOfQuestion = " + numberOfQuestion);
+        Log.i(TAG, "answerMap.size() = " + answerMap.size());
 
-        for (int i=0; i<answerMap.size(); i++){
-            if (answerMap.get(i)==1){
+        for (int i = 0; i < numberOfQuestion; i++) {
+            if (answerMap.get(i) == 1) {
                 correctAnswers++;
             }
         }
@@ -44,13 +44,15 @@ public class ResultActivity extends AppCompatActivity {
             String str = String.format("%.0f", correctAnswers * 1.0 / numberOfQuestion * 100);
             tvYourScore.setText("Correct answers: " + correctAnswers + "/" + numberOfQuestion +
                     "\nScore in percentage = " + str + "%");
+        } else {
+            tvYourScore.setText(getString(R.string.msg_something_went_wrong));
+            Log.i(TAG, "Error: numberOfQuestion = " + numberOfQuestion);
         }
 
         btnMainScreen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(ResultActivity.this, MainActivity.class));
-                finish();
+                finish(); // finish this Activity will Resume MainActivity
             }
         });
     }

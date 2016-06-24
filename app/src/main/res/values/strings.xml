@@ -45,11 +45,14 @@
     <string name="msg_playing_audio">Playing audio...</string>
     <string name="msg_list_of_question">List of Question</string>
     <string name="msg_no_question_found">"No question was found !"</string>
+    <string name="msg_no_question_found2">"No question was found !\nPlease add your own question first."</string>
     <string name="msg_go_details">"Go into details about "</string>
     <string name="msg_finish_test">Finished Test</string>
     <string name="msg_have_answer_all">"You have answered all questions!\nClick Yes to get result\nor No to go back."</string>
     <string name="msg_not_finish_test">Not Finished Test</string>
     <string name="msg_have_not_answer_all">"You have not answered all questions!\nClick Back to return\nor Quit to cancel your test."</string>
     <string name="msg_go_back_to_question">"Please go back to question "</string>
+    <string name="msg_feel_free_to_edit">Feel free to edit your answers</string>
+    <string name="msg_something_went_wrong">Oops! Something went wrong.</string>
 
 </resources>

@@ -49,6 +49,7 @@ public class ViewQuestionActivity extends AppCompatActivity implements MultiSele
             multiSelectionSpinner.setVisibility(View.INVISIBLE);
             recyclerView.setVisibility(View.INVISIBLE);
             tvSelectCategory.setText(getString(R.string.msg_no_question_found));
+            Toast.makeText(ViewQuestionActivity.this, getString(R.string.msg_no_question_found2), Toast.LENGTH_LONG).show();
             return;
         }
 

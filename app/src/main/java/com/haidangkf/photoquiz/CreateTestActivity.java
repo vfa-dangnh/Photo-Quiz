@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +26,7 @@ public class CreateTestActivity extends AppCompatActivity {
     final String TAG = "my_log";
     private TextView tvSelectCategory;
     private TextView tvSelectAll;
+    private TableRow tableRowSelectAll;
     public static CheckBox chkSelectAll;
     public static boolean isSelectAll = false;
     private EditText etNumOfQuestion;
@@ -46,11 +48,26 @@ public class CreateTestActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_test);
 
         findViewById();
-        categoryList = getCategoryDataFromDB();
-
         // set font for TextView tvSelectCategory
-        final Typeface face = Typeface.createFromAsset(getAssets(), "fonts/victoria.ttf");
+        Typeface face = Typeface.createFromAsset(getAssets(), "fonts/victoria.ttf");
         tvSelectCategory.setTypeface(face);
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        categoryList = getCategoryDataFromDB();
+        if (categoryList.size() < 1) { // in case Database is empty
+            recyclerView.setVisibility(View.INVISIBLE);
+            tableRowSelectAll.setVisibility(View.INVISIBLE);
+            etNumOfQuestion.setVisibility(View.INVISIBLE);
+            btnCreate.setVisibility(View.GONE);
+            tvSelectCategory.setText(getString(R.string.msg_no_question_found));
+            Toast.makeText(CreateTestActivity.this, getString(R.string.msg_no_question_found2), Toast.LENGTH_LONG).show();
+            return;
+        }
 
         mAdapter = new CategoryAdapter(this, categoryList);
         final RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
@@ -190,13 +207,6 @@ public class CreateTestActivity extends AppCompatActivity {
             }
         });
 
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
     }
 
     private void actionSelectAll(boolean isSelectAll) {
@@ -245,6 +255,7 @@ public class CreateTestActivity extends AppCompatActivity {
     private void findViewById() {
         tvSelectCategory = (TextView) findViewById(R.id.tvSelectCategory);
         tvSelectAll = (TextView) findViewById(R.id.tvSelectAll);
+        tableRowSelectAll = (TableRow) findViewById(R.id.tableRowSelectAll);
         chkSelectAll = (CheckBox) findViewById(R.id.chkSelectAll);
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         etNumOfQuestion = (EditText) findViewById(R.id.etNumOfQuestion);

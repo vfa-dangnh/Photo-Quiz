@@ -63,7 +63,7 @@ public class AddQuestionActivity extends AppCompatActivity {
             }
         });
 
-        getControls();
+        findViewById();
         sampleCategories = readSharedPreferences(); // read from Preferences
 
         adapterSpinner = new ArrayAdapter<String>(AddQuestionActivity.this, android.R.layout.simple_spinner_item, sampleCategories);
@@ -73,7 +73,7 @@ public class AddQuestionActivity extends AppCompatActivity {
         spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                category = sampleCategories.get(position);
+//                category = sampleCategories.get(position);
 //                Toast.makeText(AddQuestionActivity.this, getString(R.string.msg_category_is) + " " + category, Toast.LENGTH_SHORT).show();
             }
 
@@ -229,13 +229,6 @@ public class AddQuestionActivity extends AppCompatActivity {
         Log.i(TAG, "photoPath = " + photoPath);
     }
 
-//    public void AddSampleCategories() {
-//        sampleCategories.add("Object");
-//        sampleCategories.add("Human");
-//        sampleCategories.add("Animal");
-//        sampleCategories.add("Scenery");
-//    }
-
     public void reloadPhotoToView(String path) {
         File imgFile = new File(path);
         if (imgFile.exists()) {
@@ -333,7 +326,7 @@ public class AddQuestionActivity extends AppCompatActivity {
         return list;
     }
 
-    public void getControls() {
+    public void findViewById() {
         btnPhotoTaking = (ImageView) findViewById(R.id.btnPhotoTaking);
         spinnerCategory = (Spinner) findViewById(R.id.spinnerCategory);
         etComment = (EditText) findViewById(R.id.etComment);

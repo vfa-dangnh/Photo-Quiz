@@ -22,6 +22,9 @@ public class AddMoreCategoryActivity extends Activity {
         btnAdd = (Button) findViewById(R.id.btnAdd);
         btnCancel = (Button) findViewById(R.id.btnCancel);
 
+        // Don't finish it when the background activity is clicked
+        setFinishOnTouchOutside(false);
+
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

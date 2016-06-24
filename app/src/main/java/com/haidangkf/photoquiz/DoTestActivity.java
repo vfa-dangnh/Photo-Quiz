@@ -31,7 +31,7 @@ public class DoTestActivity extends AppCompatActivity {
     ArrayList<Question> matchQuestions = new ArrayList<>();
     ArrayList<Question> myTestQuestions;
     int numberOfQuestion;
-    public static HashMap<Integer, Integer> answerMap = new HashMap<>();
+    public static HashMap<Integer, Integer> answerMap;
     // -----------------------------------------------
 
     @Override
@@ -54,12 +54,14 @@ public class DoTestActivity extends AppCompatActivity {
         }
 
         myTestQuestions = randomMyTestQuestions(matchQuestions, numberOfQuestion);
+        answerMap = new HashMap<>();
+        Log.i(TAG, "answerMap.size() = " + answerMap.size());
         for (int i = 0; i < numberOfQuestion; i++) {
             answerMap.put(i, -1); // mặc định -1 tức là chưa trả lời, đúng là 1, sai là 0
+            Log.i(TAG, "answerMap.size() = " + answerMap.size());
         }
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
-
         myPagerAdapter = new MyPagerAdapter(this, myTestQuestions);
         viewPager.setAdapter(myPagerAdapter);
         viewPager.setCurrentItem(0); // set the item to view first
@@ -101,7 +103,7 @@ public class DoTestActivity extends AppCompatActivity {
 
 
     ViewPager.OnPageChangeListener pageChangeListener = new ViewPager.OnPageChangeListener() {
-        boolean isShowDialog;
+        boolean isShowDialog = false;
 
         @Override
         public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -116,11 +118,11 @@ public class DoTestActivity extends AppCompatActivity {
             //This method will be invoked when a new page becomes selected.
 //            Log.i(TAG, "ON PAGE SELECTED " + position);
 
-            int lastIndex = viewPager.getAdapter().getCount() - 1;
+            /*int lastIndex = viewPager.getAdapter().getCount() - 1;
             if (position == lastIndex) { // when on last page
-//                Toast.makeText(DoTestActivity.this, getString(R.string.msg_reach_last_page), Toast.LENGTH_SHORT).show();
+                Toast.makeText(DoTestActivity.this, getString(R.string.msg_reach_last_page), Toast.LENGTH_SHORT).show();
                 // can start new Activity here
-            }
+            }*/
         }
 
         @Override
@@ -137,19 +139,24 @@ public class DoTestActivity extends AppCompatActivity {
             }
 
             if (currentItem == lastIndex && state == 0) { // handle last page change
-                if (!isShowDialog) {
-                    isShowDialog = true;
-                } else {
+                if(lastIndex==0){ // only 1 page
                     handleExitDoTest();
+                } else { // 2 pages or more
+                    if (!isShowDialog) {
+                        // on first swipe to last page, just set the flag to true
+                        // don't show dialog at this time
+                        isShowDialog = true;
+                    } else {
+                        // user is on last page and try to swipe next
+                        handleExitDoTest();
+                    }
                 }
             }
         }
     };
 
     public void handleExitDoTest() {
-        Log.i(TAG, "answerMap.size() = " + answerMap.size());
-
-        for (int i = 0; i < answerMap.size(); i++) {
+        for (int i = 0; i < numberOfQuestion; i++) {
             if (answerMap.get(i) == -1) { // -1 là chưa trả lời
                 showNotFinishedDialog(i);
                 return;
@@ -160,7 +167,7 @@ public class DoTestActivity extends AppCompatActivity {
     }
 
     public void showFinishedDialog() {
-        AlertDialog.Builder b = new AlertDialog.Builder(DoTestActivity.this);
+        AlertDialog.Builder b = new AlertDialog.Builder(this);
         b.setTitle(getString(R.string.msg_finish_test));
         b.setMessage(getString(R.string.msg_have_answer_all));
 
@@ -179,6 +186,7 @@ public class DoTestActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
+                Toast.makeText(DoTestActivity.this, getString(R.string.msg_feel_free_to_edit), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -186,7 +194,7 @@ public class DoTestActivity extends AppCompatActivity {
     }
 
     public void showNotFinishedDialog(final int index) {
-        AlertDialog.Builder b = new AlertDialog.Builder(DoTestActivity.this);
+        AlertDialog.Builder b = new AlertDialog.Builder(this);
         b.setTitle(getString(R.string.msg_not_finish_test));
         b.setMessage(getString(R.string.msg_have_not_answer_all));
 

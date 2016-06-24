@@ -20,7 +20,7 @@ import java.io.IOException;
 
 public class QuestionDetailActivity extends AppCompatActivity {
 
-    ImageButton imgBtnBack;
+    ImageButton btnBack;
     ImageView imgPhoto;
     Button btnPlay;
     TextView tvCategory, tvComment;
@@ -32,7 +32,7 @@ public class QuestionDetailActivity extends AppCompatActivity {
 
         findViewById();
 
-        imgBtnBack.setOnClickListener(new View.OnClickListener() {
+        btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
@@ -113,7 +113,7 @@ public class QuestionDetailActivity extends AppCompatActivity {
     }
 
     private void findViewById() {
-        imgBtnBack = (ImageButton) findViewById(R.id.imgBtnBack);
+        btnBack = (ImageButton) findViewById(R.id.imgBtnBack);
         imgPhoto = (ImageView) findViewById(R.id.imgPhoto);
         btnPlay = (Button) findViewById(R.id.btnPlay);
         tvCategory = (TextView) findViewById(R.id.tvCategory);

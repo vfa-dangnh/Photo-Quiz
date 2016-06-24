@@ -71,24 +71,24 @@ public class MyPagerAdapter extends PagerAdapter {
         btnPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i(TAG, "Playing audio at " + position);
                 playAudio(myTestQuestions.get(position).getAudioPath());
+                Log.i(TAG, "Playing audio at " + position);
             }
         });
 
         btnRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i(TAG, "Position = " + position + " , Clicked Right");
                 DoTestActivity.answerMap.put(position, 1); // set 1 for right answer
+                Log.i(TAG, "Pos = " + position + ", Ans = " + DoTestActivity.answerMap.get(position) + ", Clicked Right");
             }
         });
 
         btnWrong.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i(TAG, "Position = " + position + " , Clicked Wrong");
                 DoTestActivity.answerMap.put(position, 0); // set 0 for wrong answer
+                Log.i(TAG, "Pos = " + position + ", Ans = " + DoTestActivity.answerMap.get(position) + ", Clicked Wrong");
             }
         });
 
@@ -99,7 +99,7 @@ public class MyPagerAdapter extends PagerAdapter {
     }
 
     @Override
-    public int getCount() { // number of pages can view
+    public int getCount() { // number of page can view
         return myTestQuestions.size();
     }
 
@@ -117,7 +117,7 @@ public class MyPagerAdapter extends PagerAdapter {
     // this will set up the title in ViewPager Indicator
     @Override
     public CharSequence getPageTitle(int position) {
-        return "" + (position+1);
+        return "" + (position + 1);
     }
 
     public void findViewById(View view) {
