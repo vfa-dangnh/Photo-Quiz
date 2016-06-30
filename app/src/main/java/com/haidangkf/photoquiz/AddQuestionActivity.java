@@ -9,13 +9,17 @@ import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.PopupMenu;
 import android.util.Log;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -38,6 +42,7 @@ public class AddQuestionActivity extends AppCompatActivity {
     Spinner spinnerCategory;
     EditText etComment;
     Button btnRecord, btnDelete, btnAdd, btnCancel, btnAddNewCategory;
+    ImageButton btnDownload;
 
     public static String photoPath = "";
     public static String audioPath = "";
@@ -88,6 +93,13 @@ public class AddQuestionActivity extends AppCompatActivity {
 
         btnDelete.setEnabled(false); // disable Delete button
 
+        btnDownload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPopupMenu(v);
+            }
+        });
+
         btnAddNewCategory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -123,7 +135,7 @@ public class AddQuestionActivity extends AppCompatActivity {
                     String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
                     String audioFileName = "audio_" + timeStamp + ".3gp";
                     audioPath = dirPath + "/" + audioFileName;
-                    Log.i(TAG, "audioPath = " + audioPath);
+                    Log.d(TAG, "audioPath = " + audioPath);
 
                     isRecording = true;
                     btnRecord.setBackgroundResource(R.drawable.custom_btn_sandrift);
@@ -223,10 +235,28 @@ public class AddQuestionActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.i(TAG, "onResume AddQuestionActivity");
+        Log.d(TAG, "onResume AddQuestionActivity");
 
         reloadPhotoToView(photoPath);
-        Log.i(TAG, "photoPath = " + photoPath);
+        Log.d(TAG, "photoPath = " + photoPath);
+    }
+
+    public void showPopupMenu(View v) {
+        PopupMenu popup = new PopupMenu(this, v);
+        MenuInflater inflater = popup.getMenuInflater();
+        inflater.inflate(R.menu.my_menu, popup.getMenu());
+
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Log.d(TAG, "Menu clicked : " + item.getTitle());
+                startActivity(new Intent(AddQuestionActivity.this, DownloadDatabaseActivity.class));
+                finish();
+                return true;
+            }
+        });
+
+        popup.show();
     }
 
     public void reloadPhotoToView(String path) {
@@ -275,7 +305,7 @@ public class AddQuestionActivity extends AppCompatActivity {
 
             myAudioRecorder.prepare();
             myAudioRecorder.start();
-            Log.i(TAG, "is recording...");
+            Log.d(TAG, "is recording...");
         } catch (IllegalStateException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -328,6 +358,7 @@ public class AddQuestionActivity extends AppCompatActivity {
 
     public void findViewById() {
         btnPhotoTaking = (ImageView) findViewById(R.id.btnPhotoTaking);
+        btnDownload = (ImageButton) findViewById(R.id.btnDownload);
         spinnerCategory = (Spinner) findViewById(R.id.spinnerCategory);
         etComment = (EditText) findViewById(R.id.etComment);
         btnAddNewCategory = (Button) findViewById(R.id.btnAddNewCategory);

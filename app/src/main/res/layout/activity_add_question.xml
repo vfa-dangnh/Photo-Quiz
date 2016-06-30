@@ -19,12 +19,28 @@
         android:paddingTop="8dp"
         tools:context=".AddQuestionActivity">
 
-        <ImageView
-            android:id="@+id/btnPhotoTaking"
-            android:layout_width="270dp"
+        <TableRow
+            android:layout_width="match_parent"
             android:layout_height="320dp"
-            android:layout_gravity="center_horizontal"
-            android:background="@drawable/takingphoto" />
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/btnPhotoTaking"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/takingphoto" />
+
+            <ImageButton
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_gravity="top|right"
+                android:layout_marginLeft="15dp"
+                android:background="@drawable/download"
+                android:id="@+id/btnDownload" />
+
+        </TableRow>
 
         <!--<EditText
             android:id="@+id/etCategory"
