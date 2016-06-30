@@ -31,8 +31,8 @@ public class ResultActivity extends AppCompatActivity {
         Intent intent = getIntent();
         numberOfQuestion = intent.getIntExtra("numberOfQuestion", 0);
         answerMap = (HashMap<Integer, Integer>) intent.getSerializableExtra("answerMap");
-        Log.i(TAG, "numberOfQuestion = " + numberOfQuestion);
-        Log.i(TAG, "answerMap.size() = " + answerMap.size());
+        Log.d(TAG, "numberOfQuestion = " + numberOfQuestion);
+        Log.d(TAG, "answerMap.size() = " + answerMap.size());
 
         for (int i = 0; i < numberOfQuestion; i++) {
             if (answerMap.get(i) == 1) {
@@ -46,7 +46,7 @@ public class ResultActivity extends AppCompatActivity {
                     "\nScore in percentage = " + str + "%");
         } else {
             tvYourScore.setText(getString(R.string.msg_something_went_wrong));
-            Log.i(TAG, "Error: numberOfQuestion = " + numberOfQuestion);
+            Log.d(TAG, "Error: numberOfQuestion = " + numberOfQuestion);
         }
 
         btnMainScreen.setOnClickListener(new View.OnClickListener() {

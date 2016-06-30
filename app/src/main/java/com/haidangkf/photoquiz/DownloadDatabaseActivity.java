@@ -2,9 +2,9 @@ package com.haidangkf.photoquiz;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.media.MediaScannerConnection;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -32,30 +32,22 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
 public class DownloadDatabaseActivity extends AppCompatActivity {
 
     private static final String TAG = "my_log";
-    ArrayList<Question> questionList = new ArrayList<Question>();
     private ProgressDialog mProgressDialog;
-    Button btnBack;
+    private String photoPath = "";
+    private String audioPath = "";
+    private String audioUrl = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_download_database);
 
-        String url = "http://studiocitync.org/wp-content/uploads/2011/11/stop-dog-barking1.jpg";
-        String storageDir = Environment.getExternalStorageDirectory().toString() + "/Photo_TEST";
-//        Picasso.with(MainActivity.this).load("file:///android_asset/cat.jpg").into(img);
-//        Picasso.with(this).load("http://studiocitync.org/wp-content/uploads/2011/11/stop-dog-barking1.jpg").into(img);
-        Picasso.with(this).load(url).into(getTargetToSaveImage(storageDir));
-
-        new DownloadMP3().execute();
-
-        btnBack = (Button) findViewById(R.id.btnBack);
+        Button btnBack = (Button) findViewById(R.id.btnBack);
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -81,7 +73,6 @@ public class DownloadDatabaseActivity extends AppCompatActivity {
     }
 
     private void processJson(JSONObject object) {
-
         try {
             JSONArray rows = object.getJSONArray("rows");
             Log.d(TAG, "rows.length() = " + rows.length());
@@ -92,11 +83,23 @@ public class DownloadDatabaseActivity extends AppCompatActivity {
 
                 String category = columns.getJSONObject(1).getString("v");
                 String comment = columns.getJSONObject(2).getString("v");
-                String photoPath = columns.getJSONObject(3).getString("v");
-                String audioPath = columns.getJSONObject(4).getString("v");
-                Question question = new Question(category, comment, photoPath, audioPath);
+                String photoUrl = columns.getJSONObject(3).getString("v");
+                audioUrl = columns.getJSONObject(4).getString("v");
+
+                String storageDir = Environment.getExternalStorageDirectory().toString() + "/Photo_Quiz/Photos";
+                Picasso.with(this).load(photoUrl).into(getTargetToSaveImage(storageDir)); // download image
+                if (photoPath.isEmpty()) { // failed to download image from Internet
+//                    continue; // go to next row
+                }
+
+                new DownloadAudioFile().execute(); // download audio
+                if (audioPath.isEmpty()) { // failed to download audio from Internet
+//                    continue;
+                }
+
+                Question question = new Question(category.trim(), comment.trim(), photoPath, audioPath);
+                MyApplication.db.addQuestion(question);
                 Log.d(TAG, question.toString());
-                questionList.add(question);
             }
 
         } catch (JSONException e) {
@@ -113,13 +116,11 @@ public class DownloadDatabaseActivity extends AppCompatActivity {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        Log.i(TAG, "storageDir = " + storageDir);
                         File myDir = new File(storageDir);
                         myDir.mkdirs();
                         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
                         String fileName = "photo_" + timeStamp + ".jpg";
                         File file = new File(storageDir, fileName);
-                        Log.d(TAG, "downloaded image = " + file.getAbsolutePath()); // get file path here
                         if (file.exists()) file.delete();
 
                         try {
@@ -129,6 +130,7 @@ public class DownloadDatabaseActivity extends AppCompatActivity {
                             out.close();
 
                             notifyNewMediaFile(file);
+                            photoPath = file.getAbsolutePath(); // get file path here
                             Log.d(TAG, "Image saved to storage !");
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -141,6 +143,7 @@ public class DownloadDatabaseActivity extends AppCompatActivity {
             @Override
             public void onBitmapFailed(Drawable errorDrawable) {
                 Log.d(TAG, "Failed to download image");
+                photoPath = "";
             }
 
             @Override
@@ -171,12 +174,10 @@ public class DownloadDatabaseActivity extends AppCompatActivity {
     }
 
     private void notifyNewMediaFile(File file) {
-        MediaScannerConnection.scanFile(this, new String[]{file.toString()}, null,
-                new MediaScannerConnection.OnScanCompletedListener() {
-                    public void onScanCompleted(String path, Uri uri) {
-                        Log.d(TAG, "Scan Completed");
-                    }
-                });
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        Uri contentUri = Uri.fromFile(file);
+        mediaScanIntent.setData(contentUri);
+        sendBroadcast(mediaScanIntent);
     }
 
     private boolean isNetworkAvailable() {
@@ -187,51 +188,36 @@ public class DownloadDatabaseActivity extends AppCompatActivity {
     }
 
 // --------------------------------------------------------------------------
+// for downloading audio
 
-    private class DownloadMP3 extends AsyncTask<String, Integer, String> { //params, progress, result
-        ProgressDialog progressDialog;
-
+    private class DownloadAudioFile extends AsyncTask<String, Integer, String> {
         @Override
         protected void onPreExecute() {
-            progressDialog = ProgressDialog.show(DownloadDatabaseActivity.this,
-                    "ProgressDialog",
-                    "Wait for downloading audio...");
+            Log.d(TAG, "onPreExecute");
         }
 
         @Override
         protected String doInBackground(String... arg0) {
-            int count;
             try {
-                URL url = new URL("https://s3.amazonaws.com/freesoundeffects/mp3/mp3_1338.mp3");
+                URL url = new URL(audioUrl);
                 URLConnection connection = url.openConnection();
                 connection.connect();
-                // this will be useful so that you can show on UI 0-100% progress bar
-                int lengthOfFile = connection.getContentLength();
 
-                //////////////////////////////
-                File dirPath = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Audio_TEST");
-                dirPath.mkdirs(); // make this as directory
+                File storageDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Photo_Quiz/Audio/");
+                storageDir.mkdirs(); // make this as directory
 
                 String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-                String audioFileName = "download_" + timeStamp + ".3gp";
-                String audioPath = dirPath + "/" + audioFileName;
-                Log.i(TAG, "audioPath = " + audioPath);
+                String audioFileName = "audio_" + timeStamp + ".3gp";
+                audioPath = storageDir + "/" + audioFileName;
                 File file = new File(audioPath);
                 if (file.exists()) file.delete();
-                //////////////////////////////
 
                 // download the file
                 InputStream input = new BufferedInputStream(url.openStream());
                 OutputStream output = new FileOutputStream(audioPath);
-
                 byte data[] = new byte[1024];
-
-                long total = 0;
-
+                int count;
                 while ((count = input.read(data)) != -1) {
-                    total += count;
-                    // publishing the progress....
-                    publishProgress((int) (total * 100 / lengthOfFile));
                     output.write(data, 0, count);
                 }
 
@@ -243,6 +229,7 @@ public class DownloadDatabaseActivity extends AppCompatActivity {
                 return "succeeded";
             } catch (Exception e) {
                 e.printStackTrace();
+                audioPath = "";
                 return "failed";
             }
         }
@@ -250,9 +237,7 @@ public class DownloadDatabaseActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             Log.d(TAG, "Audio download result = " + result);
-            // execution of result of Long time consuming operation
-            progressDialog.dismiss();
         }
-
     }
+
 }

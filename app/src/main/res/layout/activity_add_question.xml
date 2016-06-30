@@ -28,28 +28,19 @@
                 android:id="@+id/btnPhotoTaking"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
                 android:layout_gravity="center_horizontal"
+                android:layout_weight="1"
                 android:background="@drawable/takingphoto" />
 
             <ImageButton
+                android:id="@+id/btnDownload"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
-                android:layout_gravity="top|right"
-                android:layout_marginLeft="15dp"
-                android:background="@drawable/download"
-                android:id="@+id/btnDownload" />
+                android:layout_gravity="center_vertical|right"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/download" />
 
         </TableRow>
-
-        <!--<EditText
-            android:id="@+id/etCategory"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="15dp"
-            android:gravity="center"
-            android:hint="@string/category" />-->
 
         <TableRow
             android:layout_width="match_parent"
@@ -61,18 +52,18 @@
                 android:id="@+id/spinnerCategory"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="30dp"
-                android:layout_gravity="center_horizontal" />
+                android:layout_gravity="center_horizontal"
+                android:layout_marginRight="30dp" />
 
             <Button
+                android:id="@+id/btnAddNewCategory"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:background="@drawable/custom_btn_circle"
                 android:text="+"
-                android:textSize="18sp"
-                android:textStyle="bold"
                 android:textColor="#000000"
-                android:id="@+id/btnAddNewCategory" />
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
         </TableRow>
 

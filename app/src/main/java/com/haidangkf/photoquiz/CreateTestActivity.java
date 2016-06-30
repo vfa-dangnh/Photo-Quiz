@@ -171,9 +171,9 @@ public class CreateTestActivity extends AppCompatActivity {
                     return;
                 }
 
-                Log.i(TAG, "getChildCount = " + recyclerView.getChildCount()); // count visible items on screen
-                Log.i(TAG, "getItemCount = " + mAdapter.getItemCount()); // count all items in Adapter
-                Log.i(TAG, "chkCount = " + chkCount);
+                Log.d(TAG, "getChildCount = " + recyclerView.getChildCount()); // count visible items on screen
+                Log.d(TAG, "getItemCount = " + mAdapter.getItemCount()); // count all items in Adapter
+                Log.d(TAG, "chkCount = " + chkCount);
 
                 //-----------------------------------------------
                 allQuestions = MyApplication.db.getQuestionList();
@@ -185,7 +185,7 @@ public class CreateTestActivity extends AppCompatActivity {
                     }
                 }
 
-                Log.i(TAG, matchQuestions.size() + " questions match.");
+                Log.d(TAG, matchQuestions.size() + " questions match.");
                 if (Integer.parseInt(numberOfQuestion) > matchQuestions.size()) {
                     String msg = getString(R.string.msg_not_enough_ques) + "\n";
                     msg += getString(R.string.msg_max_of_ques_is) + " " + matchQuestions.size() + "\n";

@@ -37,10 +37,10 @@ public class TakePhotoActivity extends Activity {
             File photoFile = null;
             try {
                 photoFile = createImageFile();
-                Log.i(TAG, "Photo saved into the Gallery");
+                Log.d(TAG, "Photo saved into the Gallery");
             } catch (IOException ex) {
                 // Error occurred while creating the File
-                Log.i(TAG, "Error: " + ex.toString());
+                Log.d(TAG, "Error: " + ex.toString());
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
@@ -60,9 +60,9 @@ public class TakePhotoActivity extends Activity {
                 // set the taking photo to ImageView
                 mImageView.setImageBitmap(mImageBitmap);
 //                if (saveImageToStorage(mImageBitmap)) {
-//                    Log.i(TAG, "Photo saved into the Gallery");
+//                    Log.d(TAG, "Photo saved into the Gallery");
 //                } else {
-//                    Log.i(TAG, "Unable to store the photo");
+//                    Log.d(TAG, "Unable to store the photo");
 //                }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -88,7 +88,7 @@ public class TakePhotoActivity extends Activity {
         // Save a file: path for use with ACTION_VIEW intents
         mCurrentPhotoPath = "" + image.getAbsolutePath();
         AddQuestionActivity.photoPath = mCurrentPhotoPath;
-//        Log.i(TAG, "mCurrentPhotoPath = " + mCurrentPhotoPath);
+//        Log.d(TAG, "mCurrentPhotoPath = " + mCurrentPhotoPath);
 
         // send Broadcast to notify this photo and be able to see it in Gallery
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
@@ -104,7 +104,7 @@ public class TakePhotoActivity extends Activity {
         boolean result = false;
 
         String storageDir = Environment.getExternalStorageDirectory().toString() + "/Photo_Quiz/Photos";
-        Log.i(TAG, "storageDir = " + storageDir);
+        Log.d(TAG, "storageDir = " + storageDir);
         File myDir = new File(storageDir);
         myDir.mkdirs();
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());

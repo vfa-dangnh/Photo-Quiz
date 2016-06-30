@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         imgBtnLang.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i("lang", "" + currentLang);
+                Log.d("lang", "" + currentLang);
 
                 if (currentLang.equalsIgnoreCase("English")) {
                     setLocale("vi");

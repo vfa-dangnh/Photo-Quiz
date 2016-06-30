@@ -42,12 +42,12 @@ public class MyPagerAdapter extends PagerAdapter {
     public MyPagerAdapter(Activity activity, ArrayList<Question> myTestQuestions) {
         this.activity = activity;
         this.myTestQuestions = myTestQuestions;
-        Log.i(TAG, "enter Constructor");
+        Log.d(TAG, "enter Constructor");
     }
 
     @Override
     public Object instantiateItem(ViewGroup container, final int position) {
-        Log.i(TAG, "instantiate Item " + position);
+        Log.d(TAG, "instantiate Item " + position);
 //        LayoutInflater layoutInflater = (LayoutInflater) container.getContext()
 //                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         layoutInflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -59,7 +59,7 @@ public class MyPagerAdapter extends PagerAdapter {
 //            @Override
 //            public void onClick(View v) {
 //                int thisPosition = (int) v.getTag();
-//                Log.i(TAG, "You clicked on page " + thisPosition);
+//                Log.d(TAG, "You clicked on page " + thisPosition);
 //            }
 //        });
 
@@ -72,7 +72,7 @@ public class MyPagerAdapter extends PagerAdapter {
             @Override
             public void onClick(View v) {
                 playAudio(myTestQuestions.get(position).getAudioPath());
-                Log.i(TAG, "Playing audio at " + position);
+                Log.d(TAG, "Playing audio at " + position);
             }
         });
 
@@ -80,7 +80,7 @@ public class MyPagerAdapter extends PagerAdapter {
             @Override
             public void onClick(View v) {
                 DoTestActivity.answerMap.put(position, 1); // set 1 for right answer
-                Log.i(TAG, "Pos = " + position + ", Ans = " + DoTestActivity.answerMap.get(position) + ", Clicked Right");
+                Log.d(TAG, "Pos = " + position + ", Ans = " + DoTestActivity.answerMap.get(position) + ", Clicked Right");
             }
         });
 
@@ -88,7 +88,7 @@ public class MyPagerAdapter extends PagerAdapter {
             @Override
             public void onClick(View v) {
                 DoTestActivity.answerMap.put(position, 0); // set 0 for wrong answer
-                Log.i(TAG, "Pos = " + position + ", Ans = " + DoTestActivity.answerMap.get(position) + ", Clicked Wrong");
+                Log.d(TAG, "Pos = " + position + ", Ans = " + DoTestActivity.answerMap.get(position) + ", Clicked Wrong");
             }
         });
 
@@ -110,7 +110,7 @@ public class MyPagerAdapter extends PagerAdapter {
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-        Log.i(TAG, "destroy Item " + position);
+        Log.d(TAG, "destroy Item " + position);
         container.removeView((View) object);
     }
 
@@ -133,7 +133,7 @@ public class MyPagerAdapter extends PagerAdapter {
         Question question = myTestQuestions.get(position);
         photoPath = question.getPhotoPath();
         loadPhotoToView(photoPath);
-        Log.i(TAG, "comment = " + question.getComment());
+        Log.d(TAG, "comment = " + question.getComment());
     }
 
     public void loadPhotoToView(String path) {

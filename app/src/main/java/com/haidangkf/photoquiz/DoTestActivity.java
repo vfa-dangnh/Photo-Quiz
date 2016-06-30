@@ -41,8 +41,8 @@ public class DoTestActivity extends AppCompatActivity {
 
         selectedItems = getIntent().getStringArrayListExtra("categoryList");
         numberOfQuestion = getIntent().getIntExtra("numberOfQuestion", 0);
-        Log.i(TAG, "selectedItems = " + selectedItems.toString());
-        Log.i(TAG, "numberOfQuestion = " + numberOfQuestion);
+        Log.d(TAG, "selectedItems = " + selectedItems.toString());
+        Log.d(TAG, "numberOfQuestion = " + numberOfQuestion);
 
         allQuestions = MyApplication.db.getQuestionList();
         for (String category : selectedItems) {
@@ -55,10 +55,10 @@ public class DoTestActivity extends AppCompatActivity {
 
         myTestQuestions = randomMyTestQuestions(matchQuestions, numberOfQuestion);
         answerMap = new HashMap<>();
-        Log.i(TAG, "answerMap.size() = " + answerMap.size());
+        Log.d(TAG, "answerMap.size() = " + answerMap.size());
         for (int i = 0; i < numberOfQuestion; i++) {
             answerMap.put(i, -1); // mặc định -1 tức là chưa trả lời, đúng là 1, sai là 0
-            Log.i(TAG, "answerMap.size() = " + answerMap.size());
+            Log.d(TAG, "answerMap.size() = " + answerMap.size());
         }
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
@@ -88,7 +88,7 @@ public class DoTestActivity extends AppCompatActivity {
             Random rand = new Random();
             int n = rand.nextInt(questionList.size());
             returnQuestions.add(questionList.get(n));
-            Log.i(TAG, "Question " + (i + 1) + ": " + questionList.get(n).toString());
+            Log.d(TAG, "Question " + (i + 1) + ": " + questionList.get(n).toString());
             questionList.remove(n); // delete this question in list after getting it
         }
 
@@ -98,7 +98,7 @@ public class DoTestActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.i(TAG, "onResume DoTest");
+        Log.d(TAG, "onResume DoTest");
     }
 
 
@@ -110,13 +110,13 @@ public class DoTestActivity extends AppCompatActivity {
             //This method will be invoked when the current page is scrolled,
             //either as part of a programmatically initiated smooth scroll
             //or a user initiated touch scroll.
-//            Log.i(TAG, "onPageScrolled " + position);
+//            Log.d(TAG, "onPageScrolled " + position);
         }
 
         @Override
         public void onPageSelected(int position) {
             //This method will be invoked when a new page becomes selected.
-//            Log.i(TAG, "ON PAGE SELECTED " + position);
+//            Log.d(TAG, "ON PAGE SELECTED " + position);
 
             /*int lastIndex = viewPager.getAdapter().getCount() - 1;
             if (position == lastIndex) { // when on last page
@@ -128,7 +128,7 @@ public class DoTestActivity extends AppCompatActivity {
         @Override
         public void onPageScrollStateChanged(int state) {
             //Called when the scroll state changes.
-//            Log.i(TAG, "onPageScrollStateChanged " + state);
+//            Log.d(TAG, "onPageScrollStateChanged " + state);
 
             int lastIndex = viewPager.getAdapter().getCount() - 1;
             int penultIndex = viewPager.getAdapter().getCount() - 2; // index áp chót
