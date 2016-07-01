@@ -2,6 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:id="@+id/menuDownloadData"
-        android:title="Download from Google Sheet" />
+        android:title="Download DB from Google Sheet" />
+
+    <item android:id="@+id/menuDeleteData"
+        android:title="Delete all data from Database" />
 
 </menu>

@@ -1,6 +1,7 @@
 package com.haidangkf.photoquiz;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -8,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
 import android.util.Log;
@@ -78,7 +80,7 @@ public class AddQuestionActivity extends AppCompatActivity {
         spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                category = sampleCategories.get(position);
+                category = sampleCategories.get(position);
 //                Toast.makeText(AddQuestionActivity.this, getString(R.string.msg_category_is) + " " + category, Toast.LENGTH_SHORT).show();
             }
 
@@ -132,7 +134,7 @@ public class AddQuestionActivity extends AppCompatActivity {
                         file.delete();
                     }
 
-                    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmssSSS").format(new Date());
                     String audioFileName = "audio_" + timeStamp + ".3gp";
                     audioPath = dirPath + "/" + audioFileName;
                     Log.d(TAG, "audioPath = " + audioPath);
@@ -250,13 +252,62 @@ public class AddQuestionActivity extends AppCompatActivity {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 Log.d(TAG, "Menu clicked : " + item.getTitle());
-                startActivity(new Intent(AddQuestionActivity.this, DownloadDatabaseActivity.class));
-                finish();
+                if (item.getItemId() == R.id.menuDownloadData) {
+                    startActivity(new Intent(AddQuestionActivity.this, DownloadDatabaseActivity.class));
+                    finish();
+                } else if (item.getItemId() == R.id.menuDeleteData) {
+                    showDeleteDBDialog();
+                }
+
                 return true;
             }
         });
 
         popup.show();
+    }
+
+    public void showDeleteDBDialog(){
+        AlertDialog.Builder b = new AlertDialog.Builder(AddQuestionActivity.this);
+        b.setTitle("Delete Database");
+        b.setMessage("Are you sure you want to delete all data ?");
+        b.setCancelable(false);
+
+        b.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                ArrayList<Question> allData = MyApplication.db.getQuestionList();
+                int count = MyApplication.db.deleteAllDB(); // DB has been deleted
+                Toast.makeText(AddQuestionActivity.this, "Deleted "+count+" rows", Toast.LENGTH_SHORT).show();
+                // delete all photo and audio files in phone storage
+                if (count>0){
+                    Log.d(TAG, "delete DB");
+                    for (Question question : allData){
+                        File file = new File(question.getPhotoPath());
+                        Log.d(TAG, "photo : "+question.getPhotoPath());
+                        if (file.exists()) {
+                            file.delete();
+                        }
+
+                        file = new File(question.getAudioPath());
+                        Log.d(TAG, "audio : "+question.getAudioPath());
+                        if (file.exists()) {
+                            file.delete();
+                        }
+                    }
+                }
+
+            }
+        });
+
+        b.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                 dialog.dismiss();
+            }
+        });
+
+        b.create().show();
     }
 
     public void reloadPhotoToView(String path) {

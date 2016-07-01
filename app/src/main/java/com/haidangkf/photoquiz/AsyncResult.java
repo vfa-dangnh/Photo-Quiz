@@ -4,5 +4,5 @@ import org.json.JSONObject;
 
 interface AsyncResult
 {
-    void onResult(JSONObject object);
+    void onFinishProcess(JSONObject object);
 }

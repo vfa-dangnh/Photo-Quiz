@@ -107,7 +107,7 @@ public class TakePhotoActivity extends Activity {
         Log.d(TAG, "storageDir = " + storageDir);
         File myDir = new File(storageDir);
         myDir.mkdirs();
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmssSSS").format(new Date());
         String fileName = "photo_" + timeStamp + ".jpg";
         File file = new File(storageDir, fileName);
         if (file.exists()) file.delete();

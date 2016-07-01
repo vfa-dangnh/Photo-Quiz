@@ -191,4 +191,9 @@ public class MyDatabase extends SQLiteOpenHelper {
         database.delete("Question", "Id = ?", new String[]{id});
     }
 
+    public int deleteAllDB(){
+        int count = database.delete("Question", "1", null);
+        return count; // count of deleted rows
+    }
+
 }
