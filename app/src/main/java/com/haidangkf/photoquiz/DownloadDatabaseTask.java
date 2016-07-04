@@ -8,7 +8,9 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.google.common.io.Files;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -16,27 +18,28 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class DownloadDatabaseTask extends AsyncTask<String, Void, String> {
+
     private Context context;
     AsyncResult callback;
     private static final String TAG = "my_log";
-//    private String photoPath = "";
-//    private String audioPath = "";
-//    private String audioUrl = "";
+    int rowsLength;
 
     // constructor
     public DownloadDatabaseTask(Context context, AsyncResult callback) {
@@ -50,8 +53,8 @@ public class DownloadDatabaseTask extends AsyncTask<String, Void, String> {
         // params comes from the execute() call: params[0] is the url.
         try {
             return downloadUrl(urls[0]);
-        } catch (IOException e) {
-            return "Unable to download the requested page.";
+        } catch (Exception e) {
+            return e.toString();
         }
     }
 
@@ -71,7 +74,40 @@ public class DownloadDatabaseTask extends AsyncTask<String, Void, String> {
             JSONObject object = new JSONObject(jsonResponse);
             processJson(object);
 
-            callback.onFinishProcess(object);
+            callback.onFinishProcess("Succeeded");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void processJson(JSONObject object) {
+        try {
+            JSONArray rows = object.getJSONArray("rows");
+            rowsLength= rows.length();
+            Log.d(TAG, "rows.length() = " + rowsLength);
+
+            for (int r = 0; r < rowsLength; ++r) {
+                JSONObject row = rows.getJSONObject(r);
+                JSONArray columns = row.getJSONArray("c");
+
+                String category = columns.getJSONObject(1).getString("v");
+                String comment = columns.getJSONObject(2).getString("v");
+                String photoUrl = columns.getJSONObject(3).getString("v");
+                String audioUrl = columns.getJSONObject(4).getString("v");
+
+                File file = createPhotoFile();
+                String photoPath = file.getAbsolutePath();
+                Picasso.with(context).load(photoUrl).into(getTargetToSaveImage(file)); // download image
+
+                file = createAudioFile();
+                String audioPath = file.getAbsolutePath();
+                downloadAudioFile(audioUrl, file); // download audio
+
+                Question question = new Question(category.trim(), comment.trim(), photoPath, audioPath);
+                MyApplication.db.addQuestion(question);
+                Log.d(TAG, question.toString());
+            }
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -120,38 +156,6 @@ public class DownloadDatabaseTask extends AsyncTask<String, Void, String> {
             }
         }
         return sb.toString();
-    }
-
-    private void processJson(JSONObject object) {
-        try {
-            JSONArray rows = object.getJSONArray("rows");
-            Log.d(TAG, "rows.length() = " + rows.length());
-
-            for (int r = 0; r < rows.length(); ++r) {
-                JSONObject row = rows.getJSONObject(r);
-                JSONArray columns = row.getJSONArray("c");
-
-                String category = columns.getJSONObject(1).getString("v");
-                String comment = columns.getJSONObject(2).getString("v");
-                String photoUrl = columns.getJSONObject(3).getString("v");
-                String audioUrl = columns.getJSONObject(4).getString("v");
-
-                File file = createPhotoFile();
-                String photoPath = file.getAbsolutePath();
-                Picasso.with(context).load(photoUrl).into(getTargetToSaveImage(file)); // download image
-
-                file = createAudioFile();
-                String audioPath = file.getAbsolutePath();
-                downloadAudioFile(audioUrl, file); // download audio
-
-                Question question = new Question(category.trim(), comment.trim(), photoPath, audioPath);
-                MyApplication.db.addQuestion(question);
-                Log.d(TAG, question.toString());
-            }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
     }
 
     public Target getTargetToSaveImage(final File file) {
@@ -225,32 +229,31 @@ public class DownloadDatabaseTask extends AsyncTask<String, Void, String> {
         context.sendBroadcast(mediaScanIntent);
     }
 
+    private void downloadAudioFile(String url, final File file) {
+        FileDownloadService service = ServiceGenerator
+                .createService(FileDownloadService.class);
+        Call<ResponseBody> call = service.downloadFileWithDynamicUrlSync(url);
 
-    private String downloadAudioFile(String audioUrl, File file){
-        try {
-            URL url = new URL(audioUrl);
-            URLConnection connection = url.openConnection();
-            connection.connect();
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                Log.d(TAG, "external storage = " + (Environment.getExternalStorageState() == null));
+//                Toast.makeText(context, "Downloading file... ", Toast.LENGTH_LONG).show();
 
-            // download the file
-            InputStream input = new BufferedInputStream(url.openStream());
-            OutputStream output = new FileOutputStream(file);
-            byte[] buffer = new byte[1024];
-            int bufferLength;
-            while ((bufferLength = input.read(buffer)) > 0) {
-                output.write(buffer, 0, bufferLength);
+                try {
+                    Files.asByteSink(file).write(response.body().bytes());
+                    notifyNewMediaFile(file);
+//                    Toast.makeText(context, "Download audio completed", Toast.LENGTH_SHORT).show();
+                } catch (Exception e) {
+                    Toast.makeText(context, "Exception: " + e.toString(), Toast.LENGTH_LONG).show();
+                }
             }
 
-            output.flush();
-            output.close();
-            input.close();
-
-            notifyNewMediaFile(file);
-            return "succeeded";
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "failed";
-        }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(context, "Failed to download file", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
 }

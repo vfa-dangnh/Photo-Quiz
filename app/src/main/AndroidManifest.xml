@@ -50,8 +50,15 @@
         <activity
             android:name=".ViewQuestionActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".QuestionDetailActivity" />
-        <activity android:name=".DownloadDatabaseActivity"></activity>
+
+        <activity android:name=".QuestionDetailActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".DownloadDatabaseActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".SignInActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

@@ -12,6 +12,13 @@
     tools:context="com.haidangkf.photoquiz.DownloadDatabaseActivity">
 
     <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sign in with Google"
+        android:id="@+id/btnSignIn"
+        android:layout_gravity="center_horizontal" />
+
+    <Button
         android:id="@+id/btnDownload"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -24,6 +31,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_weight="1"
         android:orientation="vertical">
+
     </LinearLayout>
 
     <Button
