@@ -16,6 +16,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -137,10 +139,14 @@ public class MyPagerAdapter extends PagerAdapter {
     }
 
     public void loadPhotoToView(String path) {
-        File imgFile = new File(path);
-        if (imgFile.exists()) {
-            Bitmap myBitmap = decodeFile(imgFile);
-            imgPhoto.setImageBitmap(myBitmap);
+        if (path.startsWith("/storage")) { // file in storage
+            File imgFile = new File(path);
+            if (imgFile.exists()) {
+                Bitmap myBitmap = decodeFile(imgFile);
+                imgPhoto.setImageBitmap(myBitmap);
+            }
+        } else { // file in url from Internet
+            Picasso.with(activity).load(path).into(imgPhoto);
         }
     }
 

@@ -27,9 +27,9 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
+
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -90,7 +90,7 @@ public class AddQuestionActivity extends AppCompatActivity {
             }
         });
 
-        dirPath = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Photo_Quiz/Audio/");
+        dirPath = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Photo_Quiz/Audio");
         dirPath.mkdirs(); // make this as directory
 
         btnDelete.setEnabled(false); // disable Delete button
@@ -246,7 +246,7 @@ public class AddQuestionActivity extends AppCompatActivity {
     public void showPopupMenu(View v) {
         PopupMenu popup = new PopupMenu(this, v);
         MenuInflater inflater = popup.getMenuInflater();
-        inflater.inflate(R.menu.my_menu, popup.getMenu());
+        inflater.inflate(R.menu.db_popup_menu, popup.getMenu());
 
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
@@ -266,10 +266,10 @@ public class AddQuestionActivity extends AppCompatActivity {
         popup.show();
     }
 
-    public void showDeleteDBDialog(){
+    public void showDeleteDBDialog() {
         AlertDialog.Builder b = new AlertDialog.Builder(AddQuestionActivity.this);
         b.setTitle("Delete Database");
-        b.setMessage("Are you sure you want to delete all data ?");
+        b.setMessage("Are you sure you want to delete all data?");
         b.setCancelable(false);
 
         b.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -278,19 +278,19 @@ public class AddQuestionActivity extends AppCompatActivity {
 
                 ArrayList<Question> allData = MyApplication.db.getQuestionList();
                 int count = MyApplication.db.deleteAllDB(); // DB has been deleted
-                Toast.makeText(AddQuestionActivity.this, "Deleted "+count+" rows", Toast.LENGTH_SHORT).show();
+                Toast.makeText(AddQuestionActivity.this, "Deleted " + count + " rows", Toast.LENGTH_SHORT).show();
                 // delete all photo and audio files in phone storage
-                if (count>0){
-                    Log.d(TAG, "delete DB");
-                    for (Question question : allData){
+                if (count > 0) {
+                    Log.d(TAG, "delete data in phone storage...");
+                    for (Question question : allData) {
                         File file = new File(question.getPhotoPath());
-                        Log.d(TAG, "photo : "+question.getPhotoPath());
+                        Log.d(TAG, "photo : " + question.getPhotoPath());
                         if (file.exists()) {
                             file.delete();
                         }
 
                         file = new File(question.getAudioPath());
-                        Log.d(TAG, "audio : "+question.getAudioPath());
+                        Log.d(TAG, "audio : " + question.getAudioPath());
                         if (file.exists()) {
                             file.delete();
                         }
@@ -303,7 +303,7 @@ public class AddQuestionActivity extends AppCompatActivity {
         b.setNegativeButton("No", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                 dialog.dismiss();
+                dialog.dismiss();
             }
         });
 
@@ -313,37 +313,9 @@ public class AddQuestionActivity extends AppCompatActivity {
     public void reloadPhotoToView(String path) {
         File imgFile = new File(path);
         if (imgFile.exists()) {
-            Bitmap myBitmap = decodeFile(imgFile);
             btnPhotoTaking.setBackgroundResource(R.drawable.transparent_background);
-            btnPhotoTaking.setImageBitmap(myBitmap);
+            Picasso.with(this).load(imgFile).into(btnPhotoTaking);
         }
-    }
-
-    // Decodes image and scales it to reduce memory consumption
-    public Bitmap decodeFile(File f) {
-        try {
-            // Decode image size
-            BitmapFactory.Options o = new BitmapFactory.Options();
-            o.inJustDecodeBounds = true;
-            BitmapFactory.decodeStream(new FileInputStream(f), null, o);
-
-            // The new size we want to scale to
-            final int REQUIRED_SIZE = 70;
-
-            // Find the correct scale value. It should be the power of 2.
-            int scale = 1;
-            while (o.outWidth / scale / 2 >= REQUIRED_SIZE &&
-                    o.outHeight / scale / 2 >= REQUIRED_SIZE) {
-                scale *= 2;
-            }
-
-            // Decode with inSampleSize
-            BitmapFactory.Options o2 = new BitmapFactory.Options();
-            o2.inSampleSize = scale;
-            return BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
-        } catch (FileNotFoundException e) {
-        }
-        return null;
     }
 
     public void recordAudio() {
@@ -358,25 +330,24 @@ public class AddQuestionActivity extends AppCompatActivity {
             myAudioRecorder.start();
             Log.d(TAG, "is recording...");
         } catch (IllegalStateException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
         btnDelete.setEnabled(false);
-
         Toast.makeText(getApplicationContext(), getString(R.string.msg_is_recording), Toast.LENGTH_LONG).show();
     }
 
     public void stopRecordAudio() {
-        myAudioRecorder.stop();
-        myAudioRecorder.release();
-        myAudioRecorder = null;
+        try {
+            myAudioRecorder.stop();
+            myAudioRecorder.release();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         btnDelete.setEnabled(true);
-
         Toast.makeText(getApplicationContext(), getString(R.string.msg_record_success), Toast.LENGTH_LONG).show();
     }
 

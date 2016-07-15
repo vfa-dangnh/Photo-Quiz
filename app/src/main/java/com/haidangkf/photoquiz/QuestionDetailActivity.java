@@ -1,8 +1,6 @@
 package com.haidangkf.photoquiz;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -13,9 +11,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
+
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class QuestionDetailActivity extends AppCompatActivity {
@@ -55,42 +53,15 @@ public class QuestionDetailActivity extends AppCompatActivity {
                 playAudio(audioPath);
             }
         });
-
     }
 
     public void loadPhotoToView(String path) {
-        File imgFile = new File(path);
-        if (imgFile.exists()) {
-            Bitmap myBitmap = decodeFile(imgFile);
-            imgPhoto.setImageBitmap(myBitmap);
+        if (path.startsWith("/storage")) { // file in storage
+            File imgFile = new File(path);
+            Picasso.with(this).load(imgFile).into(imgPhoto);
+        } else { // file in url from Internet
+            Picasso.with(this).load(path).into(imgPhoto);
         }
-    }
-
-    // Decodes image and scales it to reduce memory consumption
-    public Bitmap decodeFile(File f) {
-        try {
-            // Decode image size
-            BitmapFactory.Options o = new BitmapFactory.Options();
-            o.inJustDecodeBounds = true;
-            BitmapFactory.decodeStream(new FileInputStream(f), null, o);
-
-            // The new size we want to scale to
-            final int REQUIRED_SIZE = 70;
-
-            // Find the correct scale value. It should be the power of 2.
-            int scale = 1;
-            while (o.outWidth / scale / 2 >= REQUIRED_SIZE &&
-                    o.outHeight / scale / 2 >= REQUIRED_SIZE) {
-                scale *= 2;
-            }
-
-            // Decode with inSampleSize
-            BitmapFactory.Options o2 = new BitmapFactory.Options();
-            o2.inSampleSize = scale;
-            return BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
-        } catch (FileNotFoundException e) {
-        }
-        return null;
     }
 
     public void playAudio(String audioPath) {
