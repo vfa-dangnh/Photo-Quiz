@@ -27,9 +27,9 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.squareup.picasso.Picasso;
-
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -40,6 +40,7 @@ import java.util.Set;
 public class AddQuestionActivity extends AppCompatActivity {
 
     final String TAG = "my_log";
+    private static final int REQUEST_ADD_MORE_CATEGORY = 2;
     ImageView btnPhotoTaking;
     Spinner spinnerCategory;
     EditText etComment;
@@ -48,7 +49,6 @@ public class AddQuestionActivity extends AppCompatActivity {
 
     public static String photoPath = "";
     public static String audioPath = "";
-    File dirPath;
     ArrayList<String> sampleCategories = new ArrayList<>();
     ArrayAdapter<String> adapterSpinner;
     String category = "";
@@ -90,9 +90,6 @@ public class AddQuestionActivity extends AppCompatActivity {
             }
         });
 
-        dirPath = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Photo_Quiz/Audio");
-        dirPath.mkdirs(); // make this as directory
-
         btnDelete.setEnabled(false); // disable Delete button
 
         btnDownload.setOnClickListener(new View.OnClickListener() {
@@ -106,18 +103,16 @@ public class AddQuestionActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(AddQuestionActivity.this, AddMoreCategoryActivity.class);
-                startActivityForResult(intent, 2);
+                startActivityForResult(intent, REQUEST_ADD_MORE_CATEGORY);
             }
         });
 
         btnPhotoTaking.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Nếu đã tồn tại file ảnh rồi thì xoá nó
+                // Nếu đã tồn tại file ảnh rồi thì xoá nó (trường hợp user chụp lại)
                 File file = new File(photoPath);
-                if (file.exists()) {
-                    file.delete();
-                }
+                if (file.exists()) file.delete();
                 photoPath = "";
                 startActivity(new Intent(AddQuestionActivity.this, TakePhotoActivity.class));
             }
@@ -128,15 +123,19 @@ public class AddQuestionActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 if (!isRecording) {
-                    // Nếu đã tồn tại file ghi âm rồi thì xoá nó
+                    // Nếu đã tồn tại file ghi âm rồi thì xoá nó (trường hợp user ghi âm lại)
                     File file = new File(audioPath);
                     if (file.exists()) {
                         file.delete();
                     }
 
+                    File audioDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/Photo_Quiz/Audio");
+                    if(!audioDir.exists()){
+                        audioDir.mkdirs(); // make this as directory
+                    }
                     String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmssSSS").format(new Date());
                     String audioFileName = "audio_" + timeStamp + ".3gp";
-                    audioPath = dirPath + "/" + audioFileName;
+                    audioPath = audioDir + "/" + audioFileName;
                     Log.d(TAG, "audioPath = " + audioPath);
 
                     isRecording = true;
@@ -225,8 +224,8 @@ public class AddQuestionActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        // Nếu gói dữ liệu có mã nhận là 2 (add more category)
-        if (resultCode == 2) {
+        // Nếu gói dữ liệu có mã nhận là REQUEST_ADD_MORE_CATEGORY (add more category)
+        if (requestCode == REQUEST_ADD_MORE_CATEGORY) {
             Bundle bundle = data.getBundleExtra("DATA_CATEGORY");
             sampleCategories.add(bundle.getString("newCategory"));
             saveSharedPreferences(sampleCategories);
@@ -314,8 +313,35 @@ public class AddQuestionActivity extends AppCompatActivity {
         File imgFile = new File(path);
         if (imgFile.exists()) {
             btnPhotoTaking.setBackgroundResource(R.drawable.transparent_background);
-            Picasso.with(this).load(imgFile).into(btnPhotoTaking);
+            btnPhotoTaking.setImageBitmap(decodeFile(imgFile));
+//            Picasso.with(this).load(imgFile).into(btnPhotoTaking);
         }
+    }
+
+    // Decode image and scale it to reduce memory consumption
+    public Bitmap decodeFile(File f) {
+        try {
+            BitmapFactory.Options o = new BitmapFactory.Options();
+            o.inJustDecodeBounds = true;
+            BitmapFactory.decodeStream(new FileInputStream(f), null, o);
+
+            // The new size we want to scale to, the bigger the better of quality
+            final int REQUIRED_SIZE = 200;
+
+            // Find the correct scale value. It should be the power of 2.
+            int scale = 1;
+            while (o.outWidth / scale / 2 >= REQUIRED_SIZE &&
+                    o.outHeight / scale / 2 >= REQUIRED_SIZE) {
+                scale *= 2;
+            }
+
+            // Decode with inSampleSize
+            BitmapFactory.Options o2 = new BitmapFactory.Options();
+            o2.inSampleSize = scale;
+            return BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
+        } catch (FileNotFoundException e) {
+        }
+        return null;
     }
 
     public void recordAudio() {
@@ -324,7 +350,7 @@ public class AddQuestionActivity extends AppCompatActivity {
             myAudioRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
             myAudioRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
             myAudioRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
-            myAudioRecorder.setOutputFile(audioPath);
+            myAudioRecorder.setOutputFile(audioPath); // save Audio file to this path
 
             myAudioRecorder.prepare();
             myAudioRecorder.start();

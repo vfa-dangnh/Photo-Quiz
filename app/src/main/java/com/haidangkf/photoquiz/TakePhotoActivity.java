@@ -1,19 +1,18 @@
 package com.haidangkf.photoquiz;
 
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+        import android.content.Intent;
+        import android.graphics.Bitmap;
+        import android.net.Uri;
+        import android.os.Bundle;
+        import android.os.Environment;
+        import android.provider.MediaStore;
+        import android.support.v7.app.AppCompatActivity;
+        import android.util.Log;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+        import java.io.File;
+        import java.io.IOException;
+        import java.text.SimpleDateFormat;
+        import java.util.Date;
 
 public class TakePhotoActivity extends AppCompatActivity {
 
@@ -32,7 +31,7 @@ public class TakePhotoActivity extends AppCompatActivity {
             File photoFile = createImageFile();
             // Continue only if the File was successfully created
             if (photoFile != null) {
-                Log.d(TAG, "photoFile not null, path = "+photoFile.getAbsolutePath());
+                Log.d(TAG, "photoFile = " + photoFile.getAbsolutePath());
                 cameraIntent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
                 startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE);
             }
@@ -48,9 +47,8 @@ public class TakePhotoActivity extends AppCompatActivity {
 
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             try {
+                // get the bitmap image after capturing
                 Bitmap mImageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), Uri.parse(mCurrentPhotoPath));
-                // set the taking photo to ImageView here
-//                mImageView.setImageBitmap(mImageBitmap);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -58,9 +56,10 @@ public class TakePhotoActivity extends AppCompatActivity {
     }
 
     private File createImageFile() {
-        String storageDir = Environment.getExternalStorageDirectory().toString() + "/Photo_Quiz/Photos";
-        File myDir = new File(storageDir);
-        myDir.mkdirs();
+        File storageDir = new File(Environment.getExternalStorageDirectory().toString() + "/Photo_Quiz/Photos");
+        if (!storageDir.exists()) {
+            storageDir.mkdirs();
+        }
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmssSSS").format(new Date());
         String fileName = "photo_" + timeStamp + ".jpg";
         File image = new File(storageDir, fileName);
@@ -76,38 +75,6 @@ public class TakePhotoActivity extends AppCompatActivity {
         sendBroadcast(mediaScanIntent);
 
         return image;
-    }
-
-    // Hàm lưu file ảnh Bitmap vào bộ nhớ máy dưới dạng JPG
-    private boolean saveImageToStorage(Bitmap finalBitmap) {
-        boolean result = false;
-
-        String storageDir = Environment.getExternalStorageDirectory().toString() + "/Photo_Quiz/Photos";
-        Log.d(TAG, "storageDir = " + storageDir);
-        File myDir = new File(storageDir);
-        myDir.mkdirs();
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmssSSS").format(new Date());
-        String fileName = "photo_" + timeStamp + ".jpg";
-        File file = new File(storageDir, fileName);
-
-        try {
-            FileOutputStream out = new FileOutputStream(file);
-            finalBitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
-            out.flush();
-            out.close();
-
-            // send Broadcast to notify this photo and be able to see it in Gallery
-            Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-            Uri contentUri = Uri.fromFile(file);
-            mediaScanIntent.setData(contentUri);
-            sendBroadcast(mediaScanIntent);
-
-            result = true;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return result;
     }
 
 }

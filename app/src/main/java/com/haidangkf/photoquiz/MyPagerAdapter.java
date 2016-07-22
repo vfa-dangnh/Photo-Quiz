@@ -150,16 +150,15 @@ public class MyPagerAdapter extends PagerAdapter {
         }
     }
 
-    // Decodes image and scales it to reduce memory consumption
+    // Decode image and scale it to reduce memory consumption
     public Bitmap decodeFile(File f) {
         try {
-            // Decode image size
             BitmapFactory.Options o = new BitmapFactory.Options();
             o.inJustDecodeBounds = true;
             BitmapFactory.decodeStream(new FileInputStream(f), null, o);
 
-            // The new size we want to scale to
-            final int REQUIRED_SIZE = 70;
+            // The new size we want to scale to, the bigger the better of quality
+            final int REQUIRED_SIZE = 200;
 
             // Find the correct scale value. It should be the power of 2.
             int scale = 1;
