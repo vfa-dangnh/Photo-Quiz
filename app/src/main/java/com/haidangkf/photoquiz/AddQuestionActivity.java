@@ -223,9 +223,7 @@ public class AddQuestionActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        // Nếu gói dữ liệu có mã nhận là REQUEST_ADD_MORE_CATEGORY (add more category)
-        if (requestCode == REQUEST_ADD_MORE_CATEGORY) {
+        if (requestCode == REQUEST_ADD_MORE_CATEGORY && resultCode == RESULT_OK) {
             Bundle bundle = data.getBundleExtra("DATA_CATEGORY");
             sampleCategories.add(bundle.getString("newCategory"));
             saveSharedPreferences(sampleCategories);

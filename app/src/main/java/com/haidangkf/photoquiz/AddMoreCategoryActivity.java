@@ -10,7 +10,6 @@ import android.widget.Toast;
 
 public class AddMoreCategoryActivity extends Activity {
 
-    private static final int RESULT_ADD_MORE_CATEGORY = 2;
     EditText etCategory;
     Button btnAdd, btnCancel;
 
@@ -37,7 +36,7 @@ public class AddMoreCategoryActivity extends Activity {
                 Bundle bundle = new Bundle();
                 bundle.putString("newCategory", etCategory.getText().toString().trim());
                 intent.putExtra("DATA_CATEGORY", bundle); // Đưa dữ liệu bundle vào intent
-                setResult(RESULT_ADD_MORE_CATEGORY, intent); // Gửi dữ liệu về activity chờ bên dưới có mã nhận 2
+                setResult(RESULT_OK, intent); // Gửi dữ liệu về activity chờ bên dưới
                 finish(); // Kết thúc Activity hiện tại
             }
         });
